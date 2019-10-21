@@ -1,9 +1,9 @@
 package presentacion;
 
 import logica.Manejador;
+
 import logica.Orientacion;
 import logica.TipoUsuario;
-import persistencia.Conn;
 import persistencia.ManejadorBD;
 
 import java.awt.EventQueue;
@@ -28,13 +28,16 @@ import javax.swing.SwingConstants;
 import javax.swing.ImageIcon;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.SystemColor;
 import javax.swing.JPasswordField;
 import javax.swing.JCheckBox;
 import java.awt.Color;
+import javax.swing.JList;
+import javax.swing.ListSelectionModel;
+import javax.swing.AbstractListModel;
+import javax.swing.DefaultListModel;
 
 public class Interface extends JFrame {
 
@@ -48,9 +51,7 @@ public class Interface extends JFrame {
 	public JTextField inputApellido;
 	public JTextField inputMail;
 	public JTextField inputCI;
-	public JPasswordField inputPassword;
-	private JTextField emailLogin;
-	private JPasswordField passwordLogin;
+	private JPasswordField pAlta;
 
 	/**
 	 * Launch the application.
@@ -118,99 +119,80 @@ public class Interface extends JFrame {
 				JMenuItem mntmNewMenuItem_4 = new JMenuItem("Dar de baja un Prestamo");
 				prestamosContent.add(mntmNewMenuItem_4);
 				
+				JButton Logout = new JButton("Desconectar");
+				Logout.setBackground(Color.WHITE);
+				
+				menuBar.add(Logout);
+				
 				princialPanel = new JPanel();
 				princialPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 				setContentPane(princialPanel);
 				princialPanel.setLayout(null);
 		
-		//Vista login
-		JPanel login = new JPanel();
-		login.setLayout(null);
-		login.setBackground(Color.WHITE);
-		login.setBounds(0, 0, 884, 540);
-		princialPanel.add(login);
+		//Panel listado de usuarios
+		JPanel listadoUsuario = new JPanel();
+		listadoUsuario.setToolTipText("");
+		listadoUsuario.setBackground(SystemColor.activeCaption);
+		listadoUsuario.setBounds(0, 0, 884, 540);
+		princialPanel.add(listadoUsuario);
+		listadoUsuario.setVisible(false);
+		listadoUsuario.setLayout(null);
 		
-		JLabel lblInicioDeSesin = new JLabel("Inicio de sesi\u00F3n");
-		lblInicioDeSesin.setFont(new Font("Alef", Font.PLAIN, 40));
-		lblInicioDeSesin.setBounds(559, 85, 285, 32);
-		login.add(lblInicioDeSesin);
-		
-		emailLogin = new JTextField();
-		emailLogin.setBackground(SystemColor.info);
-		emailLogin.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		emailLogin.setText("Ej. usuario@anima.edu.uy");
-		emailLogin.setBounds(601, 172, 204, 32);
-		login.add(emailLogin);
-		emailLogin.setColumns(10);
-		
-		passwordLogin = new JPasswordField();
-		passwordLogin.setBackground(SystemColor.info);
-		passwordLogin.setBounds(601, 237, 204, 32);
-		login.add(passwordLogin);
-		
-		JButton btnRegistrar = new JButton("Registrar");
-		btnRegistrar.setFont(new Font("Alef", Font.PLAIN, 15));
-		btnRegistrar.setBounds(581, 350, 102, 23);
-		login.add(btnRegistrar);
-		
-		JButton btnIniciar = new JButton("Ingresar");
-		btnIniciar.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				try {
-					
-					Conn connect = new Conn();
-					Connection con = connect.conectarMySQL();
-					String query = "SELECT * FROM usuarios WHERE mail='"+ emailLogin.getText()+"' AND pass='"+passwordLogin.getPassword().toString()+"'";
-  
-				    Statement st = con.createStatement();
-
-					st.executeQuery(query);
-					
-						JOptionPane.showMessageDialog(null, "Inicio de sesion exitoso...");
-						login.setVisible(false);
-						usuariosContent.setEnabled(true);
-						librosContent.setEnabled(true);
-						prestamosContent.setEnabled(true);
-					
-				} catch (SQLException e) {
-					e.printStackTrace();
-				} 
-			}
-		});
-		btnIniciar.setFont(new Font("Alef", Font.PLAIN, 15));
-		btnIniciar.setBounds(701, 350, 102, 23);
-		login.add(btnIniciar);
-		
-		JCheckBox mostrar_password = new JCheckBox("Mostrar password");
-		mostrar_password.setFont(new Font("Alef", Font.PLAIN, 15));
-		mostrar_password.setBounds(611, 276, 147, 23);
-		login.add(mostrar_password);
-		
-				JLabel userIcon = new JLabel("");
-				userIcon.setIcon(new ImageIcon(Interface.class.getResource("/user.png")));
-				userIcon.setBounds(559, 172, 32, 32);
-				login.add(userIcon);
+				JLabel lblNewLabel_2 = new JLabel("Listado de usuarios");
+				lblNewLabel_2.setFont(new Font("Tahoma", Font.BOLD, 24));
+				lblNewLabel_2.setHorizontalAlignment(SwingConstants.LEFT);
+				lblNewLabel_2.setBounds(26, 23, 242, 34);
+				listadoUsuario.add(lblNewLabel_2);
 				
-				JLabel passIcon = new JLabel("");
-				passIcon.setIcon(new ImageIcon(Interface.class.getResource("/padlock.png")));
-				passIcon.setBounds(559, 237, 32, 32);
-				login.add(passIcon);
+				inputSearch = new JTextField();
+				inputSearch.setFont(new Font("Tahoma", Font.PLAIN, 15));
 				
-				JLabel backgroundLogin = new JLabel("");
-				backgroundLogin.setBounds(0, 0, 884, 540);
-				login.add(backgroundLogin);
-				backgroundLogin.setIcon(new ImageIcon(Interface.class.getResource("/fondo-biblAnima.png")));		
+				inputSearch.setText("Ingrese CI de usuario...");
+				inputSearch.setToolTipText("");
+				inputSearch.setBounds(640, 23, 183, 31);
+				listadoUsuario.add(inputSearch);
+				inputSearch.setColumns(10);
+				
+				JButton searchUser = new JButton("");
 				
 				
-			
+				searchUser.setIcon(new ImageIcon("/search.png"));
+				searchUser.setBounds(821, 23, 41, 31);
+				listadoUsuario.add(searchUser);
 				
+				JList<?> list = new JList<Object>();
+				list.setFont(new Font("Tahoma", Font.PLAIN, 15));
+				
+				list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+				list.setBounds(26, 153, 302, 342);
+				listadoUsuario.add(list);
+				
+				JButton refrescarLista = new JButton("Refrescar lista");
+				
+				refrescarLista.setBounds(90, 119, 144, 23);
+				listadoUsuario.add(refrescarLista);
+				
+				JPanel infoUser = new JPanel();
+				infoUser.setBounds(394, 153, 453, 342);
+				listadoUsuario.add(infoUser);
+				infoUser.setLayout(null);
+				
+				JLabel nombreInfo = new JLabel("user name");
+				nombreInfo.setBackground(Color.WHITE);
+				nombreInfo.setBounds(10, 26, 215, 37);
+				infoUser.add(nombreInfo);
+				
+				JLabel lblRestoDeLa = new JLabel("resto de la info");
+				lblRestoDeLa.setBounds(10, 89, 222, 153);
+				infoUser.add(lblRestoDeLa);
+	
 		//Panel alta usuario
 		JPanel altaUsuario = new JPanel();
 		altaUsuario.setBackground(SystemColor.text);
 		altaUsuario.setBounds(0, 0, 884, 540);
 		princialPanel.add(altaUsuario);
-		altaUsuario.setVisible(false);
 		altaUsuario.setLayout(null);
+		altaUsuario.setVisible(false);
 		
 		JLabel lblNewLabel_1 = new JLabel("Ingrese aqu\u00ED los datos solicitados");
 		lblNewLabel_1.setBounds(526, 45, 328, 32);
@@ -257,12 +239,9 @@ public class Interface extends JFrame {
 		altaUsuario.add(lblPassword);
 		
 		JCheckBox mostrarPassword = new JCheckBox("Mostrar password");
+				
 		mostrarPassword.setBounds(526, 305, 137, 23);
 		altaUsuario.add(mostrarPassword);
-		
-		inputPassword = new JPasswordField();
-		inputPassword.setBounds(526, 278, 328, 20);
-		altaUsuario.add(inputPassword);
 		
 		JComboBox<String> tipoUsuario = new JComboBox<String>();
 		tipoUsuario.setBounds(526, 372, 118, 23);
@@ -294,81 +273,143 @@ public class Interface extends JFrame {
 		btnCancelar.setBounds(579, 477, 89, 23);
 		altaUsuario.add(btnCancelar);
 		
+		pAlta = new JPasswordField();
+		pAlta.setBounds(526, 278, 328, 23);
+		altaUsuario.add(pAlta);
+		
 		JLabel background = new JLabel("");
 		background.setBounds(0, 0, 884, 540);
 		background.setIcon(new ImageIcon(Interface.class.getResource("/fondo-biblAnima.png")));
-		altaUsuario.add(background);
-		//Panel listado de usuarios
-		JPanel listadoUsuario = new JPanel();
-		listadoUsuario.setToolTipText("");
-		listadoUsuario.setBackground(SystemColor.activeCaption);
-		listadoUsuario.setBounds(0, 0, 884, 540);
-		princialPanel.add(listadoUsuario);
-				listadoUsuario.setVisible(false);
-				listadoUsuario.setLayout(null);
-						
-				JLabel lblNewLabel_2 = new JLabel("Listado de usuarios");
-				lblNewLabel_2.setFont(new Font("Tahoma", Font.BOLD, 24));
-				lblNewLabel_2.setHorizontalAlignment(SwingConstants.LEFT);
-				lblNewLabel_2.setBounds(26, 17, 242, 34);
-				listadoUsuario.add(lblNewLabel_2);
-								
-				inputSearch = new JTextField();
-				inputSearch.setFont(new Font("Tahoma", Font.PLAIN, 15));
-								
-				inputSearch.setText("Ingrese CI de usuario...");
-				inputSearch.setToolTipText("");
-				inputSearch.setBounds(640, 23, 183, 31);
-				listadoUsuario.add(inputSearch);
-				inputSearch.setColumns(10);
-								
-				JButton btnNewButton = new JButton("");
-								
-								
-				btnNewButton.setIcon(new ImageIcon("/search.png"));
-				btnNewButton.setBounds(821, 23, 41, 31);
-				listadoUsuario.add(btnNewButton);
-					usuariosContent.setEnabled(false);
-					librosContent.setEnabled(false);
-					prestamosContent.setEnabled(false);
+		altaUsuario.add(background);		
+	
+		//Alta usuario
+		
+		btnAceptar.addActionListener(new ActionListener() {
+		public void actionPerformed(ActionEvent e) {
 			
-					//Actions
-					
-					//Login
-					mostrar_password.addActionListener(new ActionListener() {
-						public void actionPerformed(ActionEvent e) {
-							if( mostrar_password.isSelected()) {
-								passwordLogin.setEchoChar((char)0);
-							}else {
-								passwordLogin.setEchoChar('●');
-							}
-						}
-					});
-					
-					emailLogin.addFocusListener(new FocusAdapter() {
-					@Override
-					public void focusGained(FocusEvent arg0) {
-						if(emailLogin.getText().equals("Ej. usuario@anima.edu.uy")) {
-							emailLogin.setText("");
-						}
-					}
-					@Override
-					public void focusLost(FocusEvent e) {
-						if(emailLogin.getText().equals("")) {
-							emailLogin.setText("Ej. usuario@anima.edu.uy");
-						}
-					}
-					});
-					btnRegistrar.addActionListener(new ActionListener() {
-						public void actionPerformed(ActionEvent arg0) {
-							login.setVisible(false);
-							altaUsuario.setVisible(true);
-						}
-					});	
+			String nombre = inputNombre.getText();
+			String apellido = inputApellido.getText();
+			String mail = inputMail.getText();
+			String pass = pAlta.getText();
+			int ci = Integer.parseInt(inputCI.getText());
 			
-			//Menu
-						
+			
+			
+			if(inputNombre.equals("Nombre")) {
+				JOptionPane.showMessageDialog(null, "Faltan campos por completar", "ATENCION", ERROR);
 				
+				
+			}else{
+				Orientacion orient = man.parsearOrient(orientUsuario.getSelectedItem().toString());
+
+				TipoUsuario tipo = man.parsearTipoUsuario(tipoUsuario.getSelectedItem().toString());
+				
+				int id = manBD.generarId();
+				
+				//Java
+				try {
+					
+					man.altaUsuario(id, ci, nombre, apellido, mail, pass, tipo, orient);
+					JOptionPane.showMessageDialog(null, "Usuario creado correctamente.");
+					System.out.println(man.getUsuarios());
+					
+				}catch (Exception a) {
+					
+					JOptionPane.showMessageDialog(null, "Error al intentar crear usuario, error del programa.");
+					System.out.println("error crear user " + a);
+				}
+				
+				//SQL
+				try {
+					manBD.altaUsuarioDB(id, ci, nombre, apellido, mail, pass, String.valueOf(tipoUsuario.getSelectedItem()));
+					JOptionPane.showMessageDialog(null, "Usuario ingresado correctamente a la base de datos.");
+					
+				}catch(Exception e1) {
+					JOptionPane.showMessageDialog(null, "Error al intentar guardar usuario en la base de datos.");
+					System.out.println("error insert db" + e1);
+				}
+				
+				inputNombre.setText("Nombre");
+				inputApellido.setText("Apellido");
+				inputCI.setText("CI del usuario");
+				inputMail.setText("Ej. usuario@anima.edu.uy");
+				pAlta.setText("");
+			}
+		}
+	});
+		
+		inputNombre.addFocusListener(new FocusAdapter() {
+			@Override
+			public void focusGained(FocusEvent arg0) {
+				if( inputNombre.getText().equals("Nombre")) {
+					inputNombre.setText("");						
+				}
+			}
+			@Override
+			public void focusLost(FocusEvent arg0) {
+				if( inputNombre.getText().equals("")) {
+					inputNombre.setText("Nombre");						
+				}
+			}
+		});
+		
+		inputApellido.addFocusListener(new FocusAdapter() {
+			@Override
+			public void focusGained(FocusEvent arg0) {
+				if( inputApellido.getText().equals("Apellido")) {
+					inputApellido.setText("");						
+				}
+			}
+			@Override
+			public void focusLost(FocusEvent arg0) {
+				if( inputApellido.getText().equals("")) {
+					inputApellido.setText("Apellido");						
+				}
+			}
+		});
+		
+		inputCI.addFocusListener(new FocusAdapter() {
+			@Override
+			public void focusGained(FocusEvent arg0) {
+				if( inputCI.getText().equals("CI del usuario")) {
+					inputCI.setText("");						
+				}
+			}
+			@Override
+			public void focusLost(FocusEvent arg0) {
+				if( inputCI.getText().equals("")) {
+					inputCI.setText("CI del usuario");						
+				}
+			}
+		});
+		
+		inputMail.addFocusListener(new FocusAdapter() {
+			@Override
+			public void focusGained(FocusEvent arg0) {
+				if( inputMail.getText().equals("Ej. usuario@anima.edu.uy")) {
+					inputMail.setText("");						
+				}
+			}
+			@Override
+			public void focusLost(FocusEvent arg0) {
+				if( inputMail.getText().equals("")) {
+					inputMail.setText("Ej. usuario@anima.edu.uy");						
+				}
+			}
+		});
+		
+		
+		
+		tipoUsuario.addItem("Estudiante");
+		tipoUsuario.addItem("Profesor");
+		tipoUsuario.addItem("Bibliotecario");
+		
+		orientUsuario.addItem("TIC");
+		orientUsuario.addItem("ADM");
+		orientUsuario.addItem("TICYADM");
+								
+			//Menu
+					
 				btnAltaUsuario.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						altaUsuario.setVisible(true);
@@ -382,8 +423,26 @@ public class Interface extends JFrame {
 						altaUsuario.setVisible(false);
 					}
 				});
-			
-			//Listado de usuarios
+												
+				mostrarPassword.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent arg0) {
+						if(mostrarPassword.isSelected() == true) {
+							pAlta.setEchoChar((char) 0);
+						}else if(mostrarPassword.isSelected() == false) {
+							pAlta.setEchoChar('●');
+						}
+					}
+				});
+	
+				Logout.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent arg0) {
+						Interface.this.dispose();
+						Login frame = new Login();
+						frame.setVisible(true);
+					}
+				});
+				
+				//Listado de usuarios
 				inputSearch.addFocusListener(new FocusAdapter() {
 					@Override
 					public void focusGained(FocusEvent arg0) {
@@ -399,166 +458,39 @@ public class Interface extends JFrame {
 					}
 				});
 				
-				btnNewButton.addActionListener(new ActionListener() {
+				searchUser.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						inputSearch.setText("Ingrese CI de usuario...");
 						
 					}
 				});
-				
-
-			//Alta usuario
-				btnAceptar.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
+				listadoUsuario.setVisible(true);
+				refrescarLista.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent arg0) {
 					
-						Orientacion orient = null;
+						DefaultListModel modelo = manBD.listarUsuarios();
 						
-						switch(orientUsuario.getSelectedItem().toString()) {
-							case "TIC":
-								orient = Orientacion.TIC;
-								break;
-							case "ADM":
-								orient = Orientacion.ADM;
-								break;
-							case "TICYADM":
-								orient = Orientacion.ADMYTIC;
-								break;
-						}
-
-						TipoUsuario tipo = null;
-						
-						switch(tipoUsuario.getSelectedItem().toString()) {
-							case "ESTUDIANTE":
-								tipo = TipoUsuario.ESTUDIANTE;
-								break;
-							case "PROFESOR":
-								tipo = TipoUsuario.PROFESOR;
-								break;
-							case "BIBLIOTECARIO":
-								tipo = TipoUsuario.BIBLIOTECARIO;
-								break;
-						}
-						
-						int ci = Integer.parseInt(inputCI.getText());
-						
-						//Java
-						try {							
-							man.altaUsuario(ci, inputNombre.getText(), inputApellido.getText(), inputMail.getText(), inputPassword.getPassword().toString(), tipo, orient);
-							JOptionPane.showMessageDialog(null, "Usuario creado correctamente.");
-							
-						}catch (Exception a) {
-							JOptionPane.showMessageDialog(null, "Error al intentar crear usuario, error del programa.");
-							System.out.println("error crear user" + a);
-						}
-						
-						//SQL
-						try {
-							manBD.altaUsuarioDB(ci, inputNombre.getText(), inputApellido.getText(), inputMail.getText(), inputPassword.getPassword().toString(), String.valueOf(tipoUsuario.getSelectedItem()));
-							JOptionPane.showMessageDialog(null, "Usuario ingresado correctamente a la base de datos.");
-							
-						}catch(Exception e1) {
-							JOptionPane.showMessageDialog(null, "Error al intentar guardar usuario en la base de datos.");
-							System.out.println("error insert db" + e1);
-						}
-						
-						inputNombre.setText("Nombre");
-						inputApellido.setText("Apellido");
-						inputCI.setText("CI del usuario");
-						inputMail.setText("Ej. usuario@anima.edu.uy");
-						inputPassword.setText("");
-					}
-				});
-				
-				inputNombre.addFocusListener(new FocusAdapter() {
-					@Override
-					public void focusGained(FocusEvent arg0) {
-						if( inputNombre.getText().equals("Nombre")) {
-							inputNombre.setText("");						
-						}
-					}
-					@Override
-					public void focusLost(FocusEvent arg0) {
-						if( inputNombre.getText().equals("")) {
-							inputNombre.setText("Nombre");						
-						}
-					}
-				});
-				
-				inputApellido.addFocusListener(new FocusAdapter() {
-					@Override
-					public void focusGained(FocusEvent arg0) {
-						if( inputApellido.getText().equals("Apellido")) {
-							inputApellido.setText("");						
-						}
-					}
-					@Override
-					public void focusLost(FocusEvent arg0) {
-						if( inputApellido.getText().equals("")) {
-							inputApellido.setText("Apellido");						
-						}
-					}
-				});
-				
-				inputCI.addFocusListener(new FocusAdapter() {
-					@Override
-					public void focusGained(FocusEvent arg0) {
-						if( inputCI.getText().equals("CI del usuario")) {
-							inputCI.setText("");						
-						}
-					}
-					@Override
-					public void focusLost(FocusEvent arg0) {
-						if( inputCI.getText().equals("")) {
-							inputCI.setText("CI del usuario");						
-						}
-					}
-				});
-				
-				inputMail.addFocusListener(new FocusAdapter() {
-					@Override
-					public void focusGained(FocusEvent arg0) {
-						if( inputMail.getText().equals("Ej. usuario@anima.edu.uy")) {
-							inputMail.setText("");						
-						}
-					}
-					@Override
-					public void focusLost(FocusEvent arg0) {
-						if( inputMail.getText().equals("")) {
-							inputMail.setText("Ej. usuario@anima.edu.uy");						
-						}
-					}
-				});
-				
-				mostrarPassword.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent arg0) {
-						if( mostrarPassword.isSelected()) {
-							inputPassword.setEchoChar((char)0);
-						}else {
-							inputPassword.setEchoChar('●');
-						}
-					}
-				});
-				
-				tipoUsuario.addItem("Estudiante");
-				tipoUsuario.addItem("Profesor");
-				tipoUsuario.addItem("Bibliotecario");
-				
-				orientUsuario.addItem("TIC");
-				orientUsuario.addItem("ADM");
-				orientUsuario.addItem("TICYADM");
-				
-				btnCancelar.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent arg0) {
-						if(usuariosContent.isEnabled() == false && librosContent.isEnabled() == false && prestamosContent.isEnabled() == false) {
-							altaUsuario.setVisible(false);
-							login.setVisible(true);
-						}else if(usuariosContent.isEnabled() == true && librosContent.isEnabled() == true && prestamosContent.isEnabled() == true) {
-							
-						}
+						list.setModel(modelo);
 					
 					}
 				});
-		
+				
+				manBD.traeUsuarios();
+				
+				infoUser.setVisible(false);
+				
+				list.addMouseListener(new MouseAdapter() {
+				    public void mouseClicked(MouseEvent evt) {
+				        evt.getSource();
+				        if (evt.getClickCount() == 2) {
+				        	String mail = list.getSelectedValue().toString();
+				        	String nombre = manBD.nombreBD(mail);
+				        	
+				        	infoUser.setVisible(true);      	
+				            nombreInfo.setText(nombre);
+				        }
+				    }
+				});
 	}
 }
 

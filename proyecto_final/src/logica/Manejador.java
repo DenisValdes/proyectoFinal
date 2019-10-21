@@ -7,10 +7,12 @@ public class Manejador {
 	public ArrayList<Libro>libros;
 	public ArrayList<Prestamo>prestamos;
 
-	private static Manejador instance;
+	private static Manejador instance = null;
 	
 	private Manejador() {
-	
+		this.usuarios = new ArrayList<Usuario>();
+		this.libros = new ArrayList<Libro>();
+		this.prestamos = new ArrayList<Prestamo>();
 	}
 	
 	public static Manejador getInstance() {
@@ -20,34 +22,84 @@ public class Manejador {
 		
 		return instance;
 	}
+	
 		
 //Methods
-	
 
-	public void altaUsuario(int CI, String nombre, String apellido, String mail, String password, TipoUsuario tipo, Orientacion orient){
+	public ArrayList<Usuario> getUsuarios() {
+		return usuarios;
+	}
 
-		switch(tipo) {
+	public void setUsuarios(ArrayList<Usuario> usuarios) {
+		this.usuarios = usuarios;
+	}
 
+	public ArrayList<Libro> getLibros() {
+		return libros;
+	}
 
+	public void setLibros(ArrayList<Libro> libros) {
+		this.libros = libros;
+	}
+
+	public ArrayList<Prestamo> getPrestamos() {
+		return prestamos;
+	}
+
+	public void setPrestamos(ArrayList<Prestamo> prestamos) {
+		this.prestamos = prestamos;
+	}
+
+	public void altaUsuario(int id, int CI, String nombre, String apellido, String mail, String password, TipoUsuario tipo, Orientacion orient){
 		
-			case ESTUDIANTE:
-				Estudiante estudiante = new Estudiante(CI, nombre, apellido, mail, password, orient, tipo);
-				this.usuarios.add(estudiante);
-				
+		if( tipo == TipoUsuario.ESTUDIANTE ) {
+			Estudiante estudiante = new Estudiante(id, CI, nombre, apellido, mail, password, orient, tipo);
+			this.usuarios.add(estudiante);
+			
+		}else if( tipo == TipoUsuario.PROFESOR ) {
+			Profesor profesor = new Profesor(id, CI, nombre, apellido, mail, password, orient, tipo);
+			this.usuarios.add(profesor);
+			
+		}else if( tipo == TipoUsuario.BIBLIOTECARIO ) {
+			Bibliotecario bibliotecario = new Bibliotecario(id, CI, nombre, apellido, mail, password, tipo);
+			this.usuarios.add(bibliotecario);
+	
+		}
+	}
+	
+	//Parsear Orientacion y TipoUsuario
+	public Orientacion parsearOrient(String orientacion) {
+		Orientacion orient = null;
+		
+		switch(orientacion) {
+			case "TIC":
+				orient = Orientacion.TIC;
 				break;
-			case PROFESOR:
-				Profesor profesor = new Profesor(CI, nombre, apellido, mail, password, orient, tipo);
-				this.usuarios.add(profesor);
-				
+			case "ADM":
+				orient = Orientacion.ADM;
 				break;
-			case BIBLIOTECARIO:
-				Bibliotecario bibliotecario = new Bibliotecario(CI, nombre, apellido, mail, password, tipo);
-				this.usuarios.add(bibliotecario);
-				
+			case "TICYADM":
+				orient = Orientacion.ADMYTIC;
 				break;
-
 		}
 		
+		return orient;
+	}
+	
+	public TipoUsuario parsearTipoUsuario(String tipo) {
+		TipoUsuario tipoUsuario = null;
+		
+		if(tipo == "ESTUDIANTE") {
+				tipoUsuario = TipoUsuario.ESTUDIANTE;
+		}
+		if(tipo == "ESTUDIANTE") {
+			tipoUsuario = TipoUsuario.PROFESOR;
+		}
+		if(tipo == "ESTUDIANTE") {
+			tipoUsuario = TipoUsuario.BIBLIOTECARIO;
+		}
+		
+		return tipoUsuario;
 	}
 	
 	//Listar, buscar, consultar y modificar usuarios

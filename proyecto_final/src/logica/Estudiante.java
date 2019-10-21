@@ -5,8 +5,8 @@ public class Estudiante extends Usuario{
 	private Orientacion orient;
 	private int cantPrestamosEnParalelo = 0;
 
-	public Estudiante(int CI, String nombre, String apellido, String mail, String password, Orientacion orient, TipoUsuario tipoUsuario) {
-		super(CI, nombre, apellido, mail, password, tipoUsuario);
+	public Estudiante(int id, int CI, String nombre, String apellido, String mail, String password, Orientacion orient, TipoUsuario tipoUsuario) {
+		super(id, CI, nombre, apellido, mail, password, tipoUsuario);
 		this.orient = orient;
 	}
 
