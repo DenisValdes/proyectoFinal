@@ -79,6 +79,8 @@ public class Interface extends JFrame {
 		Manejador man = Manejador.getInstance();
 		ManejadorBD manBD = new ManejadorBD();
 		
+		man.altaUsuario();
+		
 		//Menu
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
@@ -439,27 +441,28 @@ public class Interface extends JFrame {
 						
 					}
 				});
+			
 				listadoUsuario.setVisible(true);
 				refrescarLista.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent arg0) {
 					
-						DefaultListModel modelo = manBD.listarUsuarios();
+						DefaultListModel modelo = man.listarUsuariosExistentes();
 						
 						list.setModel(modelo);
 					
 					}
 				});
 				
-				manBD.traeUsuarios();
-				
 				infoUser.setVisible(false);
 				
 				list.addMouseListener(new MouseAdapter() {
 				    public void mouseClicked(MouseEvent evt) {
-				        evt.getSource();
-				        if (evt.getClickCount() == 2) {
+				    	evt.getSource();
+				        if (evt.getClickCount() == 1) {
 				        	String mail = list.getSelectedValue().toString();
 				        	String nombre = manBD.nombreBD(mail);
+				        	
+				        	
 				        	
 				        	infoUser.setVisible(true);      	
 				            nombreInfo.setText(nombre);

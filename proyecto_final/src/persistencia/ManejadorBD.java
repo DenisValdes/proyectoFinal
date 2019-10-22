@@ -116,7 +116,6 @@ public class ManejadorBD {
 	
 	
 	//USUARIOS
-	@SuppressWarnings("null")
 	public void altaUsuarioDB(int id, int ci, String nombre, String apellido, String mail, String password, String tipo, String orient) {
 						
 		try {
@@ -148,67 +147,7 @@ public class ManejadorBD {
 		}
 		
 	}
-	
-	public void traeUsuarios() {
 		
-		try {
-			
-			Conn connect = new Conn();
-			con = connect.conectarMySQL();
-			String query = "SELECT * FROM usuarios";
-			
-			Statement st = con.createStatement();
-			ResultSet x = st.executeQuery(query);
-			
-			while(x.next()) {
-				int id = x.getInt("id");
-				int ci = x.getInt("ci");
-				String nombre = x.getString("nombre");
-				String apellido = x.getString("apellido");
-				String mail = x.getString("mail");
-				String password = x.getString("pass");
-				
-				String tipo = x.getString("tipo");
-				
-				System.out.println(id + ci + nombre + apellido + mail + password +  tipo);
-			}
-			
-			x.close();
-			st.close();
-			
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-	}
-	
-	public DefaultListModel<String> listarUsuarios() {
-		DefaultListModel<String> DLM = new DefaultListModel<String>();
-		
-		try {
-			Conn connect = new Conn();
-			Connection con = connect.conectarMySQL();
-			
-			String query = "select * from usuarios";
-			Statement st = con.createStatement();
-																
-			ResultSet x = st.executeQuery(query);
-			
-			while(x.next()) {
-				DLM.addElement(x.getString("mail"));
-			}
-			
-			x.close();
-			st.close();
-		
-		}catch(SQLException e) {
-			System.out.println(e);
-		}
-		
-		return DLM;
-	}
-	
 	public String nombreBD(String mail) {
 		
 		String nombre = null;

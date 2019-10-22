@@ -6,6 +6,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
+import javax.swing.DefaultListModel;
+
 import persistencia.Conn;
 
 public class Manejador {
@@ -58,6 +60,8 @@ public class Manejador {
 
 	
 	public void altaUsuario(){
+		
+		this.usuarios.clear();
 			
 		try {
 			Conn connect = new Conn();
@@ -141,6 +145,8 @@ public class Manejador {
 			
 			x.close();
 			st.close();
+			
+			System.out.println(getUsuarios());
 		
 		}catch(SQLException e) {
 			System.out.println(e);
@@ -166,10 +172,18 @@ public class Manejador {
 	}
 	
 	//Listar, buscar, consultar y modificar usuarios
-	public ArrayList<Usuario> listarUsuariosExistentes(){
-		return this.usuarios;
+	public DefaultListModel<String> listarUsuariosExistentes(){
 		
-		//
+		DefaultListModel<String> DLM = new DefaultListModel<String>();
+		
+		String mail = "";
+		
+		for(int i=0; i <= this.usuarios.size(); i++) {
+			mail = this.usuarios.get(i).getMail();
+			DLM.addElement(mail);
+		}
+		
+		return DLM;
 	}
 	
 	public Usuario buscarUsuario(int CI) {
