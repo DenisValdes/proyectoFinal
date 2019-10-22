@@ -1,0 +1,58 @@
+CREATE DATABASE biblanima;
+
+USE biblanima;
+
+CREATE TABLE usuarios(
+    id INTEGER,
+    ci INTEGER UNIQUE,
+    nombre VARCHAR( 30 ),
+    apellido VARCHAR( 30 ),
+    mail VARCHAR( 30 ) UNIQUE,
+    pass VARCHAR( 30 ),
+    tipo VARCHAR( 30 ),
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE estudiantes(
+    id INTEGER PRIMARY KEY,
+    orientacion VARCHAR( 10 ),
+    prestamos_activos tinyint,
+    FOREIGN KEY(id) REFERENCES usuarios(id)
+);
+
+CREATE TABLE profesores(
+    id INTEGER PRIMARY KEY,
+    orientacion VARCHAR( 10 ),
+    FOREIGN KEY(id) REFERENCES usuarios(id)
+);
+
+CREATE TABLE biblotecarios(
+    id INTEGER PRIMARY KEY,
+    FOREIGN KEY(id) REFERENCES usuarios(id)
+);
+
+CREATE TABLE libros(
+    codigo varchar( 30 ) PRIMARY KEY,
+    autor varchar( 30 ),
+    titulo varchar( 30 ),
+    genero varchar( 30 ),
+    anio_publicacion DATE,
+    editorial varchar( 30 ),
+    numero_edicion varchar( 30 ),
+    descripcion TEXT,
+    link_portada TEXT,
+    cant_ejemplares INTEGER,
+    ejemplares_disponibles BIT,
+    isbn BIGINT UNIQUE
+);
+
+CREATE TABLE prestamos(
+id INTEGER AUTO_INCREMENT PRIMARY KEY ,
+    devuelto BIT,
+    fecha_solicitud DATE,
+    fecha_devolucion DATE,
+    id_usuario INTEGER,
+    codigo_libro varchar( 30 ),
+    FOREIGN KEY(id_usuario) REFERENCES usuarios(id),
+    FOREIGN KEY(codigo_libro) REFERENCES libros(codigo)
+);

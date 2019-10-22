@@ -291,50 +291,25 @@ public class Interface extends JFrame {
 			String apellido = inputApellido.getText();
 			String mail = inputMail.getText();
 			String pass = pAlta.getText();
+			
 			int ci = Integer.parseInt(inputCI.getText());
-			
-			
-			
-			if(inputNombre.equals("Nombre")) {
-				JOptionPane.showMessageDialog(null, "Faltan campos por completar", "ATENCION", ERROR);
+			int id = manBD.generarId();
+										
+			//SQL
+			try {
+				manBD.altaUsuarioDB(id, ci, nombre, apellido, mail, pass, String.valueOf(tipoUsuario.getSelectedItem()), String.valueOf(orientUsuario.getSelectedItem()));
+				JOptionPane.showMessageDialog(null, "Usuario ingresado correctamente a la base de datos.");
 				
-				
-			}else{
-				Orientacion orient = man.parsearOrient(orientUsuario.getSelectedItem().toString());
-
-				TipoUsuario tipo = man.parsearTipoUsuario(tipoUsuario.getSelectedItem().toString());
-				
-				int id = manBD.generarId();
-				
-				//Java
-				try {
-					
-					man.altaUsuario(id, ci, nombre, apellido, mail, pass, tipo, orient);
-					JOptionPane.showMessageDialog(null, "Usuario creado correctamente.");
-					System.out.println(man.getUsuarios());
-					
-				}catch (Exception a) {
-					
-					JOptionPane.showMessageDialog(null, "Error al intentar crear usuario, error del programa.");
-					System.out.println("error crear user " + a);
-				}
-				
-				//SQL
-				try {
-					manBD.altaUsuarioDB(id, ci, nombre, apellido, mail, pass, String.valueOf(tipoUsuario.getSelectedItem()));
-					JOptionPane.showMessageDialog(null, "Usuario ingresado correctamente a la base de datos.");
-					
-				}catch(Exception e1) {
-					JOptionPane.showMessageDialog(null, "Error al intentar guardar usuario en la base de datos.");
-					System.out.println("error insert db" + e1);
-				}
-				
-				inputNombre.setText("Nombre");
-				inputApellido.setText("Apellido");
-				inputCI.setText("CI del usuario");
-				inputMail.setText("Ej. usuario@anima.edu.uy");
-				pAlta.setText("");
+			}catch(Exception e1) {
+				JOptionPane.showMessageDialog(null, "Error al intentar guardar usuario en la base de datos.");
+				System.out.println("error insert db" + e1);
 			}
+				
+			inputNombre.setText("Nombre");
+			inputApellido.setText("Apellido");
+			inputCI.setText("CI del usuario");
+			inputMail.setText("Ej. usuario@anima.edu.uy");
+			pAlta.setText("");
 		}
 	});
 		

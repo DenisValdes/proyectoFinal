@@ -1,11 +1,17 @@
 package logica;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 
+import persistencia.Conn;
+
 public class Manejador {
-	public ArrayList<Usuario>usuarios;
-	public ArrayList<Libro>libros;
-	public ArrayList<Prestamo>prestamos;
+	public ArrayList<Usuario>usuarios=new ArrayList<>();
+	public ArrayList<Libro>libros=new ArrayList<>();;
+	public ArrayList<Prestamo>prestamos=new ArrayList<>();;
 
 	private static Manejador instance = null;
 	
@@ -50,42 +56,99 @@ public class Manejador {
 		this.prestamos = prestamos;
 	}
 
-	public void altaUsuario(int id, int CI, String nombre, String apellido, String mail, String password, TipoUsuario tipo, Orientacion orient){
-		
-		if( tipo == TipoUsuario.ESTUDIANTE ) {
-			Estudiante estudiante = new Estudiante(id, CI, nombre, apellido, mail, password, orient, tipo);
-			this.usuarios.add(estudiante);
-			
-		}else if( tipo == TipoUsuario.PROFESOR ) {
-			Profesor profesor = new Profesor(id, CI, nombre, apellido, mail, password, orient, tipo);
-			this.usuarios.add(profesor);
-			
-		}else if( tipo == TipoUsuario.BIBLIOTECARIO ) {
-			Bibliotecario bibliotecario = new Bibliotecario(id, CI, nombre, apellido, mail, password, tipo);
-			this.usuarios.add(bibliotecario);
 	
+	public void altaUsuario(){
+			
+		try {
+			Conn connect = new Conn();
+			Connection con = connect.conectarMySQL();
+			
+			String query1 = "SELECT * FROM estudiantes e INNER JOIN usuarios u ON e.id = u.id";
+			String query2 = "SELECT * FROM profesores p INNER JOIN usuarios u ON p.id = u.id";
+			String query3 = "SELECT * FROM bibliotecarios b INNER JOIN usuarios u ON b.id = u.id";
+			
+			Statement st = con.createStatement();
+			ResultSet x = st.executeQuery(query1);
+			
+			while(x.next()) {
+				
+				int id = x.getInt("id");
+				int ci = x.getInt("ci");
+				String nombre = x.getString("nombre");
+				String apellido = x.getString("apellido");
+				String mail = x.getString("mail");
+				String pass = x.getString("pass");
+				TipoUsuario  tipo = parsearTipoUsuario(x.getString("tipo"));
+				
+				if(x.getString("orientacion").equals("TIC") ) {
+					
+					Estudiante estudiante = new Estudiante(id, ci, nombre, apellido, mail, pass, Orientacion.TIC, tipo);
+					this.usuarios.add(estudiante);
+				}
+				
+				if(x.getString("orientacion").equals("ADM") ) {
+					
+					Estudiante estudiante = new Estudiante(id, ci, nombre, apellido, mail, pass, Orientacion.ADM, tipo);
+					this.usuarios.add(estudiante);
+				}
+			
+			}
+			
+			ResultSet y = st.executeQuery(query2);
+			
+			while(y.next()) {
+					
+				int id = y.getInt("id");
+				int ci = y.getInt("ci");
+				String nombre = y.getString("nombre");
+				String apellido = y.getString("apellido");
+				String mail = y.getString("mail");
+				String pass = y.getString("pass");
+				TipoUsuario  tipo = parsearTipoUsuario(y.getString("tipo"));
+				
+				if(y.getString("orientacion").equals("TIC") ) {
+					
+					Profesor profesor = new Profesor(id, ci, nombre, apellido, mail, pass, Orientacion.TIC, tipo);
+					this.usuarios.add(profesor);
+				}
+				if(y.getString("orientacion").equals("ADM") ) {
+					
+					Profesor profesor = new Profesor(id, ci, nombre, apellido, mail, pass, Orientacion.ADM, tipo);
+					this.usuarios.add(profesor);
+				}
+				if(y.getString("orientacion").equals("TICYADM") ) {
+	
+					Profesor profesor = new Profesor(id, ci, nombre, apellido, mail, pass, Orientacion.ADMYTIC, tipo);
+					this.usuarios.add(profesor);
+				}
+			}
+			
+			ResultSet z = st.executeQuery(query3);
+			
+			while(z.next()) {
+										
+					int id = z.getInt("id");
+					int ci = z.getInt("ci");
+					String nombre = z.getString("nombre");
+					String apellido = z.getString("apellido");
+					String mail = z.getString("mail");
+					String pass = z.getString("pass");
+					TipoUsuario  tipo = parsearTipoUsuario(z.getString("tipo"));
+					
+					Bibliotecario bibliotecario = new Bibliotecario(id, ci, nombre, apellido, mail, pass, tipo);
+					this.usuarios.add(bibliotecario);
+			}
+			
+			x.close();
+			st.close();
+		
+		}catch(SQLException e) {
+			System.out.println(e);
 		}
 	}
 	
-	//Parsear Orientacion y TipoUsuario
-	public Orientacion parsearOrient(String orientacion) {
-		Orientacion orient = null;
+	//Parsear TipoUsuario
 		
-		switch(orientacion) {
-			case "TIC":
-				orient = Orientacion.TIC;
-				break;
-			case "ADM":
-				orient = Orientacion.ADM;
-				break;
-			case "TICYADM":
-				orient = Orientacion.ADMYTIC;
-				break;
-		}
-		
-		return orient;
-	}
-	
 	public TipoUsuario parsearTipoUsuario(String tipo) {
 		TipoUsuario tipoUsuario = null;
 		

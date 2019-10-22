@@ -116,32 +116,32 @@ public class ManejadorBD {
 	
 	
 	//USUARIOS
-	
-	public void altaUsuarioDB(int id, int ci, String nombre, String apellido, String mail, String password, String tipo) {
-		
+	@SuppressWarnings("null")
+	public void altaUsuarioDB(int id, int ci, String nombre, String apellido, String mail, String password, String tipo, String orient) {
+						
 		try {
-			
 			Conn connect = new Conn();
 			con = connect.conectarMySQL();
-			PreparedStatement statement = con.prepareStatement("INSERT INTO usuarios(id, ci, nombre, apellido, mail, pass, tipo) VALUES (?,?,?,?,?,?,?);");
-			statement.setInt(1, id);
-			statement.setInt(2, ci);
-			statement.setString(3, nombre);
-			statement.setString(4, apellido);
-			statement.setString(5, mail);
-			statement.setString(6, password);
-			statement.setString(7, tipo);
+			Statement statement;
 			
-			int x = statement.executeUpdate();
-			
-			if(x > 0) {
-				System.out.println("Registro exitoso...");
+			statement = con.createStatement();
+			statement.executeUpdate("INSERT INTO usuarios(id,ci,nombre,apellido,mail,pass,tipo) VALUES ("+id+","+ci+",'"+nombre+"','"+apellido+"','"+mail+"','"+password+"','"+tipo+"');");
+									
+			switch(tipo) {
+				case "Estudiante":
+					statement.executeUpdate("INSERT INTO estudiantes(id,orientacion,prestamos_activos) VALUES ("+id+",'"+orient+"',"+2+");");
+					break;
 				
-			}else {
-				System.out.println("Registro fallido...");
-			}
+				case "Profesor":
+					statement.executeUpdate("INSERT INTO profesores(id,orientacion) VALUES ("+id+",'"+orient+");");
+					break;
+				
+				case "Bibliotecario":
+					statement.executeUpdate("INSERT INTO bibliotecarios(id) VALUES ("+id+");");
+					break;		
+			}		
 			
-			
+			statement.close();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -173,7 +173,8 @@ public class ManejadorBD {
 				System.out.println(id + ci + nombre + apellido + mail + password +  tipo);
 			}
 			
-			
+			x.close();
+			st.close();
 			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
