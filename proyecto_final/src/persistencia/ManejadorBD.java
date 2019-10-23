@@ -1,12 +1,9 @@
 package persistencia;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-
-import javax.swing.DefaultListModel;
 
 import logica.Orientacion;
 import logica.TipoUsuario;
@@ -124,7 +121,7 @@ public class ManejadorBD {
 			Statement statement;
 			
 			statement = con.createStatement();
-			statement.executeUpdate("INSERT INTO usuarios(id,ci,nombre,apellido,mail,pass,tipo) VALUES ("+id+","+ci+",'"+nombre+"','"+apellido+"','"+mail+"','"+password+"','"+tipo+"');");
+			statement.executeUpdate("INSERT INTO usuarios(id,ci,nombre,apellido,mail,pass,tipo) VALUES ("+id+","+ci+",'"+nombre+"','"+apellido+"','"+mail+"','"+password+"','"+tipo+"')");
 									
 			switch(tipo) {
 				case "Estudiante":
@@ -132,7 +129,7 @@ public class ManejadorBD {
 					break;
 				
 				case "Profesor":
-					statement.executeUpdate("INSERT INTO profesores(id,orientacion) VALUES ("+id+",'"+orient+");");
+					statement.executeUpdate("INSERT INTO profesores(id,orientacion) VALUES ("+id+",'"+orient+"')");
 					break;
 				
 				case "Bibliotecario":
@@ -148,27 +145,20 @@ public class ManejadorBD {
 		
 	}
 		
-	public String nombreBD(String mail) {
-		
-		String nombre = null;
-		
+	public void modificarDatos(int id, int ci, String nombre, String apellido, String mail, String pass) {
 		try {
 			Conn connect = new Conn();
 			con = connect.conectarMySQL();
-			String query = "SELECT nombre FROM usuarios WHERE mail= '"+ mail +"'";
+			Statement statement;
 			
-			Statement st = con.createStatement();
-			ResultSet x = st.executeQuery(query);
+			statement = con.createStatement();
+			statement.executeUpdate("UPDATE usuarios SET ci = "+ci+", nombre = '"+nombre+"', apellido = '"+apellido+"', mail = '"+mail+"', pass = '"+pass+"' WHERE id = "+id+"");		
 			
-			while(x.next()) {
-				nombre = x.getString("nombre"); 
-			}
-						
+			statement.close();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		return nombre;
 	}
+	
 }

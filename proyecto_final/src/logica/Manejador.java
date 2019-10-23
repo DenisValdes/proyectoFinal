@@ -6,8 +6,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-import javax.swing.DefaultListModel;
-
 import persistencia.Conn;
 
 public class Manejador {
@@ -145,8 +143,6 @@ public class Manejador {
 			
 			x.close();
 			st.close();
-			
-			System.out.println(getUsuarios());
 		
 		}catch(SQLException e) {
 			System.out.println(e);
@@ -170,50 +166,81 @@ public class Manejador {
 		
 		return tipoUsuario;
 	}
+
 	
 	//Listar, buscar, consultar y modificar usuarios
-	public DefaultListModel<String> listarUsuariosExistentes(){
-		
-		DefaultListModel<String> DLM = new DefaultListModel<String>();
-		
-		String mail = "";
-		
-		for(int i=0; i <= this.usuarios.size(); i++) {
-			mail = this.usuarios.get(i).getMail();
-			DLM.addElement(mail);
-		}
-		
-		return DLM;
-	}
-	
-	public Usuario buscarUsuario(int CI) {
-		Usuario resultado = null;
-		
-		for(int i=0; i <= this.usuarios.size(); i++) {
-			if(this.usuarios.get(i).getCI() == CI) {
-				resultado = this.usuarios.get(i);
-				break;
+		public Usuario consultaUsuario(String mail) {
+			Usuario consulta = null;
+			
+			for(int i=0; i < this.usuarios.size(); i++) {
+				if(this.usuarios.get(i).getMail() == mail) {
+					consulta = this.usuarios.get(i);
+					break;
+				}
 			}
+			
+			return consulta;
 		}
-		
-		return resultado;
-	}
 	
-	public Usuario consultaUsuario(int id) {
-		Usuario consulta = null;
-		
-		for(int i=0; i <= this.usuarios.size(); i++) {
-			if(this.usuarios.get(i).getId() == id) {
-				consulta = this.usuarios.get(i);
-				break;
+		public Usuario buscarUsuario(int CI) {
+			Usuario busqueda = null;
+			
+			for(int i=0; i < this.usuarios.size(); i++) {
+				if(this.usuarios.get(i).getCI() == CI) {
+					busqueda = this.usuarios.get(i);
+					break;
+				}
 			}
+			
+			return busqueda;
 		}
 		
-		return consulta;
-	}
-	
-	public void modificarDatosUsuarios(int CI, String nombre, String apellido, String mail, String password) {
+		public ArrayList<Usuario> listarUsuariosExistentes(){
+			return getUsuarios();
+		}
+			
+		public void modificarDatosUsuarios(int CI, String nombre, String apellido, String mail, String password) {
+			
+		}
 		
+		public void altaLibro(){
+		
+		this.usuarios.clear();
+			
+		try {
+			Conn connect = new Conn();
+			Connection con = connect.conectarMySQL();
+			
+			String query = "SELECT * FROM libors";
+			
+			Statement st = con.createStatement();
+			ResultSet x = st.executeQuery(query);
+			
+			while(x.next()) {
+				
+				String codigoAnima = x.getString("codigo");
+				String autor = x.getString("autor");
+				int fechaPubl = x.getInt("anio_publicacion");
+				String nroEdicion = x.getString("numero_edicion");
+				String editorial = x.getString("editorial");
+				String descripcion = x.getString("descripcion");
+				int cantEjemplares = x.getInt("cant_ejemplares");
+				boolean hayEjemplarDisponible = x.getBoolean("ejemplares_disponibles");
+				long codigoISBN = x.getLong("isbn");
+				String genero = x.getString("genero");
+				String imagUrl = x.getString("link_portada");
+				
+				Libro libro = new Libro(codigoAnima, autor, fechaPubl, nroEdicion, editorial, descripcion, cantEjemplares, hayEjemplarDisponible, codigoISBN, genero, imagUrl);
+				
+				System.out.println(libro);
+			
+			}
+			
+			x.close();
+			st.close();
+		
+		}catch(SQLException e) {
+			System.out.println(e);
+		}
 	}
-	
 }

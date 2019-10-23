@@ -1,23 +1,21 @@
 package logica;
 
-import java.util.Date;
-
 public class Libro {
 	
-	private String codigoAnima;
+	private String aniCode;
 	private String autor;
-	private Date fechaPubl;
-	private int nroEdicion;
+	private int fechaPubl;
+	private String nroEdicion;
 	private String editorial;
 	private String descripcion;
 	private int cantEjemplares;
 	private Boolean hayEjemplarDisponible;
-	private int codigoISBN;
+	private Long codigoISBN;
 	private String genero;
 	private String imagUrl;
 	
-	public Libro(String codigoAnima, String autor, Date fechaPubl, int nroEdicion, String editorial, String descripcion, int cantEjemplares,Boolean hayEjemplarDisponible, int codigoISBN, String genero, String imagUrl) {
-		this.codigoAnima = codigoAnima;
+	public Libro(String aniCode, String autor, int fechaPubl, String nroEdicion, String editorial, String descripcion, int cantEjemplares,Boolean hayEjemplarDisponible, Long codigoISBN, String genero, String imagUrl) {
+		this.aniCode = aniCode;
 		this.autor = autor;
 		this.fechaPubl = fechaPubl;
 		this.nroEdicion = nroEdicion;
@@ -30,12 +28,12 @@ public class Libro {
 		this.imagUrl = imagUrl;
 	}
 
-	public String getCodigoAnima() {
-		return codigoAnima;
+	public String getAniCode() {
+		return aniCode;
 	}
 
-	public void setCodigoAnima(String codigoAnima) {
-		this.codigoAnima = codigoAnima;
+	public void setAniCode(String aniCode) {
+		this.aniCode = aniCode;
 	}
 
 	public String getAutor() {
@@ -46,19 +44,19 @@ public class Libro {
 		this.autor = autor;
 	}
 
-	public Date getFechaPubl() {
+	public int getFechaPubl() {
 		return fechaPubl;
 	}
 
-	public void setFechaPubl(Date fechaPubl) {
+	public void setFechaPubl(int fechaPubl) {
 		this.fechaPubl = fechaPubl;
 	}
 
-	public int getNroEdicion() {
+	public String getNroEdicion() {
 		return nroEdicion;
 	}
 
-	public void setNroEdicion(int nroEdicion) {
+	public void setNroEdicion(String nroEdicion) {
 		this.nroEdicion = nroEdicion;
 	}
 
@@ -94,11 +92,11 @@ public class Libro {
 		this.hayEjemplarDisponible = hayEjemplarDisponible;
 	}
 
-	public int getCodigoISBN() {
+	public Long getCodigoISBN() {
 		return codigoISBN;
 	}
 
-	public void setCodigoISBN(int codigoISBN) {
+	public void setCodigoISBN(Long codigoISBN) {
 		this.codigoISBN = codigoISBN;
 	}
 
@@ -117,5 +115,6 @@ public class Libro {
 	public void setImagUrl(String imagUrl) {
 		this.imagUrl = imagUrl;
 	}
-		
+
+	
 }
