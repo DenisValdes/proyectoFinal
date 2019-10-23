@@ -152,7 +152,13 @@ public class ManejadorBD {
 			Statement statement;
 			
 			statement = con.createStatement();
-			statement.executeUpdate("UPDATE usuarios SET ci = "+ci+", nombre = '"+nombre+"', apellido = '"+apellido+"', mail = '"+mail+"', pass = '"+pass+"' WHERE id = "+id+"");		
+			ResultSet x = statement.executeQuery("SELECT * FROM usuarios");
+
+			while(x.next()) {
+				statement.executeUpdate("UPDATE usuarios SET ci = "+ci+", nombre = '"+nombre+"', apellido = '"+apellido+"', mail = '"+mail+"', pass = '"+pass+"' WHERE id = "+id+"");		
+
+			}
+			
 			
 			statement.close();
 		} catch (SQLException e) {

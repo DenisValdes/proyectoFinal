@@ -201,8 +201,20 @@ public class Manejador {
 			
 		public void modificarDatosUsuarios(int CI, String nombre, String apellido, String mail, String password) {
 			
+			for(int i = 0; i < this.usuarios.size(); i++) {
+				if( this.usuarios.get(i).getMail() == mail ) {
+					
+					this.usuarios.get(i).setCI(CI);
+					this.usuarios.get(i).setNombre(nombre);
+					this.usuarios.get(i).setApellido(apellido);
+					this.usuarios.get(i).setMail(mail);
+					this.usuarios.get(i).setPassword(password);
+				}
+			}
+			
 		}
 		
+	//Libros
 		public void altaLibro(){
 		
 		this.usuarios.clear();

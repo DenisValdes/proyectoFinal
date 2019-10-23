@@ -302,6 +302,7 @@ public class Interface extends JFrame {
 						infoUser.add(cancelarUpdate);
 						
 						JButton aceptarUpdate = new JButton("Aceptar");
+						
 						aceptarUpdate.setVisible(false);
 						
 						aceptarUpdate.setFont(new Font("Tahoma", Font.BOLD, 12));
@@ -618,7 +619,7 @@ public class Interface extends JFrame {
 								ArrayList<Usuario> usuarios = man.listarUsuariosExistentes();
 								String mail;
 								
-								for ( int i = 0; usuarios.size() > i; i++ ){
+								for ( int i = 0; i < usuarios.size(); i++ ){
 								  mail = usuarios.get(i).getMail();
 								  listModel.add(i, mail);
 								}
@@ -709,6 +710,35 @@ public class Interface extends JFrame {
 								
 								aceptarUpdate.setVisible(false);
 								cancelarUpdate.setVisible(false);
+							}
+						});
+						
+						//Acepta el update
+						aceptarUpdate.addActionListener(new ActionListener() {
+							public void actionPerformed(ActionEvent arg0) {
+							
+								ArrayList<Usuario> usuarios = man.listarUsuariosExistentes();
+								int id = 0;
+								
+								for ( int i = 0; usuarios.size() > i; i++ ){
+									id = usuarios.get(i).getId();
+								}
+								
+								int ci = Integer.valueOf(updateCi.getText());
+								String nombre = updateNombre.getText();
+								String apellido = updateApellido.getText();
+								String mail = updateMail.getText();
+								String password = updatePass.getText();
+								
+								try {
+									man.modificarDatosUsuarios(ci, nombre, apellido, mail, password);
+									manBD.modificarDatos(id, ci, nombre, apellido, mail, password);
+									
+									JOptionPane.showMessageDialog(null, "Datos modificador correctamente", "Mensaje del sistema", JOptionPane.INFORMATION_MESSAGE);
+								}catch(Exception l) {
+									
+								}
+								
 							}
 						});
 			
