@@ -66,7 +66,9 @@ public class Prestamo {
 	}
 
 	public void setLibro(ArrayList<Libro> libro) {
-		this.libro = libro;
+		if(getLibro().size() <= 3) {
+			this.libro = libro;
+		}
 	}
 	
 }

@@ -3,7 +3,7 @@ package logica;
 import java.util.ArrayList;
 
 public class Usuario {
-	
+
 	private int id;
 	private int CI;
 	private String nombre;
@@ -11,10 +11,11 @@ public class Usuario {
 	private String mail;
 	private String password;
 	private TipoUsuario tipoUsuario;
-	
+
 	private ArrayList<Prestamo> prestamos;
-	
-	public Usuario(int id, int CI, String nombre, String apellido, String mail, String password, TipoUsuario tipoUsuario) {
+
+	public Usuario(int id, int CI, String nombre, String apellido, String mail, String password,
+			TipoUsuario tipoUsuario) {
 		this.id = id;
 		this.CI = CI;
 		this.nombre = nombre;
@@ -24,7 +25,7 @@ public class Usuario {
 		this.tipoUsuario = tipoUsuario;
 		this.prestamos = new ArrayList<Prestamo>();
 	}
-	
+
 	public int getId() {
 		return id;
 	}
@@ -32,7 +33,7 @@ public class Usuario {
 	public void setId(int id) {
 		this.id = id;
 	}
-	
+
 	public int getCI() {
 		return CI;
 	}
@@ -72,7 +73,7 @@ public class Usuario {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	
+
 	public TipoUsuario getTipoUsuario() {
 		return tipoUsuario;
 	}
@@ -88,5 +89,5 @@ public class Usuario {
 	public void setPrestamos(ArrayList<Prestamo> prestamos) {
 		this.prestamos = prestamos;
 	}
-	
+
 }

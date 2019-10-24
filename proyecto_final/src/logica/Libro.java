@@ -1,7 +1,7 @@
 package logica;
 
 public class Libro {
-	
+
 	private String aniCode;
 	private String autor;
 	private int fechaPubl;
@@ -13,8 +13,9 @@ public class Libro {
 	private Long codigoISBN;
 	private String genero;
 	private String imagUrl;
-	
-	public Libro(String aniCode, String autor, int fechaPubl, String nroEdicion, String editorial, String descripcion, int cantEjemplares,Boolean hayEjemplarDisponible, Long codigoISBN, String genero, String imagUrl) {
+
+	public Libro(String aniCode, String autor, int fechaPubl, String nroEdicion, String editorial, String descripcion,
+			int cantEjemplares, Boolean hayEjemplarDisponible, Long codigoISBN, String genero, String imagUrl) {
 		this.aniCode = aniCode;
 		this.autor = autor;
 		this.fechaPubl = fechaPubl;
@@ -116,5 +117,4 @@ public class Libro {
 		this.imagUrl = imagUrl;
 	}
 
-	
 }

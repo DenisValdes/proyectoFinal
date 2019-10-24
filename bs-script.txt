@@ -26,24 +26,24 @@ CREATE TABLE profesores(
     FOREIGN KEY(id) REFERENCES usuarios(id)
 );
 
-CREATE TABLE biblotecarios(
+CREATE TABLE bibliotecarios(
     id INTEGER PRIMARY KEY,
     FOREIGN KEY(id) REFERENCES usuarios(id)
 );
 
 CREATE TABLE libros(
     codigo varchar( 30 ) PRIMARY KEY,
-    autor varchar( 30 ),
+    autor varchar( 30 ),    
     titulo varchar( 30 ),
     genero varchar( 30 ),
     anio_publicacion DATE,
     editorial varchar( 30 ),
     numero_edicion varchar( 30 ),
     descripcion TEXT,
-    link_portada TEXT,
+    isbn BIGINT UNIQUE,
     cant_ejemplares INTEGER,
     ejemplares_disponibles BIT,
-    isbn BIGINT UNIQUE
+    link_portada TEXT
 );
 
 CREATE TABLE prestamos(
