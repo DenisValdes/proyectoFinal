@@ -1,6 +1,7 @@
 package persistencia;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -149,18 +150,16 @@ public class ManejadorBD {
 		try {
 			Conn connect = new Conn();
 			con = connect.conectarMySQL();
-			Statement statement;
-			
-			statement = con.createStatement();
-			ResultSet x = statement.executeQuery("SELECT * FROM usuarios");
-
-			while(x.next()) {
-				statement.executeUpdate("UPDATE usuarios SET ci = "+ci+", nombre = '"+nombre+"', apellido = '"+apellido+"', mail = '"+mail+"', pass = '"+pass+"' WHERE id = "+id+"");		
-
-			}
-			
-			
-			statement.close();
+			PreparedStatement ps = con.prepareStatement("UPDATE usuarios SET ci=?, nombre=?, apellido=?, mail=?, pass=? WHERE id=?");
+				ps.setInt(1, ci);
+				ps.setString(2, nombre);
+				ps.setString(3, apellido);
+				ps.setString(4, mail);
+				ps.setString(5, pass);
+				ps.setInt(6, id);
+				
+				ps.executeUpdate();
+			ps.close();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

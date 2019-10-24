@@ -7,11 +7,13 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 import persistencia.Conn;
+import persistencia.ManejadorBD;
 
 public class Manejador {
 	public ArrayList<Usuario>usuarios=new ArrayList<>();
 	public ArrayList<Libro>libros=new ArrayList<>();;
 	public ArrayList<Prestamo>prestamos=new ArrayList<>();;
+	private ManejadorBD manBD = new ManejadorBD(); 
 
 	private static Manejador instance = null;
 	
@@ -56,7 +58,6 @@ public class Manejador {
 		this.prestamos = prestamos;
 	}
 
-	
 	public void altaUsuario(){
 		
 		this.usuarios.clear();
@@ -167,7 +168,6 @@ public class Manejador {
 		return tipoUsuario;
 	}
 
-	
 	//Listar, buscar, consultar y modificar usuarios
 		public Usuario consultaUsuario(String mail) {
 			Usuario consulta = null;
@@ -199,16 +199,18 @@ public class Manejador {
 			return getUsuarios();
 		}
 			
-		public void modificarDatosUsuarios(int CI, String nombre, String apellido, String mail, String password) {
+		public void modificarDatosUsuarios(int id, int CI, String nombre, String apellido, String mail, String password) {
 			
 			for(int i = 0; i < this.usuarios.size(); i++) {
-				if( this.usuarios.get(i).getMail() == mail ) {
+				if( this.usuarios.get(i).getId() == id ) {
 					
 					this.usuarios.get(i).setCI(CI);
 					this.usuarios.get(i).setNombre(nombre);
 					this.usuarios.get(i).setApellido(apellido);
 					this.usuarios.get(i).setMail(mail);
 					this.usuarios.get(i).setPassword(password);
+					
+					manBD.modificarDatos(this.usuarios.get(i).getId(), this.usuarios.get(i).getCI(), this.usuarios.get(i).getNombre(), this.usuarios.get(i).getApellido(), this.usuarios.get(i).getMail(), this.usuarios.get(i).getPassword());
 				}
 			}
 			

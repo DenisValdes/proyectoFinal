@@ -716,27 +716,43 @@ public class Interface extends JFrame {
 						//Acepta el update
 						aceptarUpdate.addActionListener(new ActionListener() {
 							public void actionPerformed(ActionEvent arg0) {
-							
-								ArrayList<Usuario> usuarios = man.listarUsuariosExistentes();
-								int id = 0;
-								
-								for ( int i = 0; usuarios.size() > i; i++ ){
-									id = usuarios.get(i).getId();
-								}
-								
-								int ci = Integer.valueOf(updateCi.getText());
-								String nombre = updateNombre.getText();
-								String apellido = updateApellido.getText();
-								String mail = updateMail.getText();
-								String password = updatePass.getText();
 								
 								try {
-									man.modificarDatosUsuarios(ci, nombre, apellido, mail, password);
-									manBD.modificarDatos(id, ci, nombre, apellido, mail, password);
 									
-									JOptionPane.showMessageDialog(null, "Datos modificador correctamente", "Mensaje del sistema", JOptionPane.INFORMATION_MESSAGE);
+									String mail = list.getSelectedValue();
+																		
+									Usuario usuario = man.consultaUsuario(mail);
+									
+									man.modificarDatosUsuarios(usuario.getId(), Integer.valueOf(updateCi.getText()), updateNombre.getText(), updateApellido.getText(), updateMail.getText(), updatePass.getText());
+																				
+									JOptionPane.showMessageDialog(null, "Datos modificador correctamente", "Mensaje del sistema", JOptionPane.PLAIN_MESSAGE);
+									
+									nombreInfo.setVisible(true);
+									updateNombre.setVisible(false);
+									
+									apellidoInfo.setVisible(true);
+									updateApellido.setVisible(false);
+									
+									ciInfo.setVisible(true);
+									updateCi.setVisible(false);
+									
+									mailInfo.setVisible(true);
+									updateMail.setVisible(false);
+									
+									prestamosInfo.setVisible(true);
+									
+									lblPassword_1.setVisible(false);
+									updatePass.setVisible(false);								
+
+									lblPrestamosActivos.setVisible(true);
+									prestamosInfo.setVisible(true);
+									
+									aceptarUpdate.setVisible(false);
+									cancelarUpdate.setVisible(false);
+								
 								}catch(Exception l) {
-									
+									JOptionPane.showMessageDialog(null, "Error al intentar modificar los datos. Verifique los campos.", "Mensaje del sistema", JOptionPane.ERROR_MESSAGE);
+									System.out.println(l);
 								}
 								
 							}
