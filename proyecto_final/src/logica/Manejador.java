@@ -43,7 +43,7 @@ public class Manejador {
 	}
 
 	public ArrayList<Libro> getLibros() {
-		return libros;
+		return this.libros;
 	}
 
 	public void setLibros(ArrayList<Libro> libros) {
@@ -238,9 +238,18 @@ public class Manejador {
 				Date fecha_solicitud = x.getDate("fecha_solicitud");
 				Date fecha_devolucion= x.getDate("fecha_devolucion");
 				int id_usuario = x.getInt("id_usuario");
-				int codigo_libro = x.getInt("codigo_libro");
+				String codigo_libro = x.getString("codigo_libro");
 				
-				Prestamo prestamo = new Prestamo(codigo_libro, fecha_devolucion, fecha_devolucion, devuelto);
+				Libro libro = null;
+				
+				for(int i = 0; i < this.libros.size(); i++) {
+					if(this.libros.get(i).getAniCode() ==  codigo_libro) {
+						libro = this.libros.get(i);
+					}
+				}
+				
+				Prestamo prestamo = new Prestamo(id, fecha_solicitud, fecha_devolucion, devuelto, libro, id_usuario);
+				this.prestamos.add(prestamo);
 				
 			}
 
@@ -253,9 +262,13 @@ public class Manejador {
 	}
 	
 	// Libros
- 	public void altaLibro() {
+	public void altaLibro(int codigoISBN) {
+		
+	}
+	
+ 	public void traerLibrosBd() {
 
-		this.usuarios.clear();
+		this.libros.clear();
 
 		try {
 			Conn connect = new Conn();
@@ -270,6 +283,7 @@ public class Manejador {
 
 				String codigoAnima = x.getString("codigo");
 				String autor = x.getString("autor");
+				String titulo = x.getString("titulo");
 				int fechaPubl = x.getInt("anio_publicacion");
 				String nroEdicion = x.getString("numero_edicion");
 				String editorial = x.getString("editorial");
@@ -280,12 +294,9 @@ public class Manejador {
 				String genero = x.getString("genero");
 				String imagUrl = x.getString("link_portada");
 
-				Libro libro = new Libro(codigoAnima, autor, fechaPubl, nroEdicion, editorial, descripcion,
-						cantEjemplares, hayEjemplarDisponible, codigoISBN, genero, imagUrl);
-
-				System.out.println(libro);
-
-			}
+				Libro libro = new Libro(codigoAnima, autor, titulo, genero, fechaPubl, editorial, nroEdicion, descripcion, codigoISBN, cantEjemplares, hayEjemplarDisponible, imagUrl);
+				this.libros.add(libro);
+			}	
 
 			x.close();
 			st.close();

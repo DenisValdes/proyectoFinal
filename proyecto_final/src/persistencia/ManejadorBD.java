@@ -167,8 +167,7 @@ public class ManejadorBD {
 
 			switch (tipo) {
 			case "Estudiante":
-				statement.executeUpdate("INSERT INTO estudiantes(id,orientacion,prestamos_activos) VALUES (" + id + ",'"
-						+ orient + "'," + 2 + ");");
+				statement.executeUpdate("INSERT INTO estudiantes(id,orientacion,prestamos_activos) VALUES (" + id + ",'"+ orient + "'," + 2 + ");");
 				break;
 
 			case "Profesor":

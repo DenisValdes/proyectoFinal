@@ -11,6 +11,7 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.JTextField;
 import javax.swing.JLabel;
@@ -31,6 +32,7 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.DataOutput;
 import java.util.ArrayList;
 import java.awt.SystemColor;
 import javax.swing.JPasswordField;
@@ -56,7 +58,7 @@ public class Interface extends JFrame {
 	private JList<String> list;
 
 	DefaultListModel<String> listModel;
-	DefaultListModel<String> listlibros;
+	DefaultTableModel listlibros;
 
 	ArrayList<Usuario> usuarios;
 	private JTextField updateNombre;
@@ -111,6 +113,10 @@ public class Interface extends JFrame {
 
 		JMenuItem mntmNewMenuItem_3 = new JMenuItem("Dar de alta un libro ");
 		librosContent.add(mntmNewMenuItem_3);
+		
+		JMenuItem mntmListaDeLibros = new JMenuItem("Lista de libros");
+		
+		librosContent.add(mntmListaDeLibros);
 
 		JMenu prestamosContent = new JMenu("Prestamos");
 		menuBar.add(prestamosContent);
@@ -141,14 +147,21 @@ public class Interface extends JFrame {
 		libros.setBounds(0, 0, 900, 600);
 		princialPanel.add(libros);
 		libros.setLayout(null);
+		libros.setVisible(false);
 
 		JScrollPane scrollPane_1 = new JScrollPane();
-		scrollPane_1.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+		scrollPane_1.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		scrollPane_1.setBounds(27, 146, 844, 379);
 		libros.add(scrollPane_1);
 
-		table = new JTable();
+	    JTable table = new JTable();
+	    table.setFillsViewportHeight(true);
 		scrollPane_1.setViewportView(table);
+		
+		JButton btnNewButton = new JButton("New button");
+		
+		btnNewButton.setBounds(23, 54, 184, 59);
+		libros.add(btnNewButton);
 
 		// Vista listado de usuarios
 		JPanel listadoUsuario = new JPanel();
@@ -752,6 +765,8 @@ public class Interface extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				altaUsuario.setVisible(true);
 				listadoUsuario.setVisible(false);
+				libros.setVisible(false);
+
 			}
 		});
 
@@ -759,6 +774,7 @@ public class Interface extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				listadoUsuario.setVisible(true);
 				altaUsuario.setVisible(false);
+				libros.setVisible(false);
 
 				man.altaUsuario();
 
@@ -777,6 +793,16 @@ public class Interface extends JFrame {
 			}
 		});
 
+		mntmListaDeLibros.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+			
+				listadoUsuario.setVisible(false);
+				altaUsuario.setVisible(false);
+				libros.setVisible(true);
+				
+			}
+		});
+		
 		Logout.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				Interface.this.dispose();
@@ -785,19 +811,8 @@ public class Interface extends JFrame {
 			}
 		});
 
-		// Se cargan todos los usuarios desde la base de datos y luego se crean y
-		// guardan en un ArrayList en Java, para luego listarlos.
-		man.altaUsuario();
 
-		listModel = new DefaultListModel<>();
-
-		ArrayList<Usuario> usuarios = man.listarUsuariosExistentes();
-		String mail;
-
-		for (int i = 0; usuarios.size() > i; i++) {
-			mail = usuarios.get(i).getMail();
-			listModel.add(i, mail);
-		}
+		
 
 		// Muestra info de usuario seleccionado
 		list.addMouseListener(new MouseAdapter() {
@@ -818,13 +833,41 @@ public class Interface extends JFrame {
 			}
 		});
 
-		// Se cargan todos los usuarios desde la base de datos y luego se crean y
-		// guardan en un ArrayList en Java, para luego listarlos.
-		man.altaLibro();
-
-		ArrayList<Libro> librosList = man.listarLibros();
-
-		System.out.println(librosList);
-
+		// Se cargan todos los datos al iniciar el programa: usuarios, libros y prestamos.
+			man.altaUsuario();
+	
+			listModel = new DefaultListModel<>();
+	
+			ArrayList<Usuario> usuarios = man.listarUsuariosExistentes();
+			String mail;	
+			
+			for (int i = 0; usuarios.size() > i; i++) {
+				mail = usuarios.get(i).getMail();
+				listModel.add(i, mail);
+			}
+			
+			man.traerLibrosBd();
+			
+			ArrayList<Libro> librosList = man.listarLibros();	
+			
+			listlibros = new DefaultTableModel();
+			
+			Object[] columns = {"Titulo", "Autor", "Edicion", "Ejemplares disponibles", "Codigo"};
+			listlibros.setColumnIdentifiers(columns);
+			table.setModel(listlibros);
+			table.setBackground(Color.WHITE);
+			table.setRowHeight(30);
+			
+			for(int i = 0; i < librosList.size(); i++) {
+				Object [] row = new Object[5];
+				
+				row[0] = librosList.get(i).getTitulo();
+				row[1] = librosList.get(i).getAutor();
+				row[2] = librosList.get(i).getNroEdicion();
+				row[3] = librosList.get(i).getHayEjemplarDisponible();
+				row[4] = librosList.get(i).getAniCode();
+				
+				listlibros.addRow(row);
+			} 
 	}
 }

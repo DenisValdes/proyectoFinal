@@ -4,21 +4,26 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class Prestamo {
-	
+
 	private int id;
 	private Date fechaSolicitado;
 	private Date fechaDevolucion;
 	private Boolean devuelto;
-	private ArrayList<Notificacion> cantNotificaciones;
-	private ArrayList<Libro> libro;
-	
-	public Prestamo(int id, Date fechaSolicitado, Date fechaDevolucion, Boolean devuelto) {
+	private ArrayList<Notificacion> Notificaciones;
+	private ArrayList<Libro> libros;
+	private Libro libro;
+	private int id_user;
+	private Notificacion notificacion;
+
+	public Prestamo(int id, Date fechaSolicitado, Date fechaDevolucion, Boolean devuelto, Libro libro, int id_user) {
 		this.id = id;
 		this.fechaSolicitado = fechaSolicitado;
 		this.fechaDevolucion = fechaDevolucion;
 		this.devuelto = devuelto;
-		libro = new ArrayList<>();
-		cantNotificaciones = new ArrayList<>();
+		this.libros = new ArrayList<>();
+		this.Notificaciones = new ArrayList<>();
+		this.libro = libro;
+		this.id_user = id_user;
 	}
 
 	public int getId() {
@@ -54,21 +59,50 @@ public class Prestamo {
 	}
 
 	public ArrayList<Notificacion> getNotificaciones() {
-		return cantNotificaciones;
+		return Notificaciones;
 	}
 
 	public void setNotificaciones(ArrayList<Notificacion> notificaciones) {
-		this.cantNotificaciones = notificaciones;
+		try {
+			if(0 < notificaciones.size() && notificaciones.size() < 3) {
+				Notificaciones = notificaciones;
+			}
+		}catch(Exception e) {
+			
+		}
 	}
 
-	public ArrayList<Libro> getLibro() {
+	public ArrayList<Libro> getLibros() {
+		return libros;
+	}
+
+	public void setLibros(ArrayList<Libro> libros) {
+		this.libros = libros;
+	}
+
+	public Libro getLibro() {
 		return libro;
 	}
 
-	public void setLibro(ArrayList<Libro> libro) {
-		if(getLibro().size() <= 3) {
-			this.libro = libro;
-		}
+	public void setLibro(Libro libro) {
+		this.libro = libro;
 	}
-	
+
+	public int getId_user() {
+		return id_user;
+	}
+
+	public void setId_user(int id_user) {
+		this.id_user = id_user;
+	}
+
+	public Notificacion getNotificacion() {
+		return notificacion;
+	}
+
+	public void setNotificacion(Notificacion notificacion) {
+		this.notificacion = notificacion;
+	}
+
+
 }
