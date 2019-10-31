@@ -3,12 +3,12 @@ package logica;
 public class Estudiante extends Usuario{
 	
 	private Orientacion orient;
-	private int cantPrestamosEnParalelo;
+	private int prestamos;
 
-	public Estudiante(int id, int CI, String nombre, String apellido, String mail, String password, Orientacion orient, TipoUsuario tipoUsuario) {
+	public Estudiante(int id, int CI, String nombre, String apellido, String mail, String password, Orientacion orient, TipoUsuario tipoUsuario, int prestamos) {
 		super(id, CI, nombre, apellido, mail, password, tipoUsuario);
 		this.orient = orient;
-		this.cantPrestamosEnParalelo = cantPrestamosEnParalelo;
+		this.prestamos = prestamos;
 	}
 	
 	public Orientacion getOrient() {
@@ -19,12 +19,12 @@ public class Estudiante extends Usuario{
 		this.orient = orient;
 	}
 
-	public int getCantPrestamosEnParalelo() {
-		return cantPrestamosEnParalelo;
+	public int getprestamos() {
+		return prestamos;
 	}
 
-	public void setCantPrestamosEnParalelo(int cantPrestamosEnParalelo) {
-		this.cantPrestamosEnParalelo = cantPrestamosEnParalelo;
+	public void setprestamos(int prestamos) {
+		this.prestamos = prestamos;
 	}
 	
 }

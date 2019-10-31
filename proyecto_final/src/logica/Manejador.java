@@ -5,15 +5,15 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Date;
 
 import persistencia.Conn;
 import persistencia.ManejadorBD;
 
 public class Manejador {
 	public ArrayList<Usuario> usuarios = new ArrayList<>();
-	public ArrayList<Libro> libros = new ArrayList<>();;
-	public ArrayList<Prestamo> prestamos = new ArrayList<>();;
+	public ArrayList<Libro> libros = new ArrayList<>();
+	public ArrayList<Prestamo> prestamos = new ArrayList<>();
+	public ArrayList<Estudiante> estudiantes = new ArrayList<>();
 	private ManejadorBD manBD = new ManejadorBD();
 
 	private static Manejador instance = null;
@@ -101,16 +101,18 @@ public class Manejador {
 				String mail = x.getString("mail");
 				String pass = x.getString("pass");
 				TipoUsuario tipo = parsearTipoUsuario(x.getString("tipo"));
+				int prestamos = x.getInt("prestamos_activos");
 
 				if (x.getString("orientacion").equals("TIC")) {
 
-					Estudiante estudiante = new Estudiante(id, ci, nombre, apellido, mail, pass, Orientacion.TIC, tipo);
+					Estudiante estudiante = new Estudiante(id, ci, nombre, apellido, mail, pass, Orientacion.TIC, tipo, prestamos);
 					this.usuarios.add(estudiante);
+					this.estudiantes.add(estudiante);
 				}
 
 				if (x.getString("orientacion").equals("ADM")) {
 
-					Estudiante estudiante = new Estudiante(id, ci, nombre, apellido, mail, pass, Orientacion.ADM, tipo);
+					Estudiante estudiante = new Estudiante(id, ci, nombre, apellido, mail, pass, Orientacion.ADM, tipo, prestamos);
 					this.usuarios.add(estudiante);
 				}
 
@@ -169,6 +171,31 @@ public class Manejador {
 		}
 	}
 
+	public int devolverPrestamos(int id) {
+		int v = 0;
+		
+		for(int i = 0; i < this.estudiantes.size(); i++) {
+			if(this.estudiantes.get(i).getId() == id) {
+				v = this.estudiantes.get(i).getprestamos();
+			}
+		}
+		
+		return v;
+	}
+	
+	public Usuario consultaUsuarioID(int id) {
+		Usuario consulta = null;
+
+		for (int i = 0; i < this.usuarios.size(); i++) {
+			if (this.usuarios.get(i).getId() == id) {
+				consulta = this.usuarios.get(i);
+				break;
+			}
+		}
+
+		return consulta;
+	}
+	
 	public Usuario consultaUsuario(String mail) {
 		Usuario consulta = null;
 
@@ -235,20 +262,12 @@ public class Manejador {
 
 				int id = x.getInt("id");
 				Boolean devuelto = x.getBoolean("devuelto");
-				Date fecha_solicitud = x.getDate("fecha_solicitud");
-				Date fecha_devolucion= x.getDate("fecha_devolucion");
+				String fecha_solicitud = x.getString("fecha_solicitud");
+				String fecha_devolucion= x.getString("fecha_devolucion");
 				int id_usuario = x.getInt("id_usuario");
 				String codigo_libro = x.getString("codigo_libro");
-				
-				Libro libro = null;
-				
-				for(int i = 0; i < this.libros.size(); i++) {
-					if(this.libros.get(i).getAniCode() ==  codigo_libro) {
-						libro = this.libros.get(i);
-					}
-				}
-				
-				Prestamo prestamo = new Prestamo(id, fecha_solicitud, fecha_devolucion, devuelto, libro, id_usuario);
+								
+				Prestamo prestamo = new Prestamo(id, fecha_solicitud, fecha_devolucion, devuelto, codigo_libro, id_usuario);
 				this.prestamos.add(prestamo);
 				
 			}
@@ -259,6 +278,10 @@ public class Manejador {
 		} catch (SQLException e) {
 			System.out.println(e);
 		}
+	}
+	
+	public ArrayList<Prestamo> listarPrestamos(){
+		return getPrestamos();
 	}
 	
 	// Libros
@@ -308,5 +331,17 @@ public class Manejador {
 
 	public ArrayList<Libro> listarLibros() {
 		return getLibros();
+	}
+
+	public Libro consultaLibro(String aniCode) {
+		Libro libro = null;
+		
+		for(int i = 0; i < this.libros.size(); i++) {
+			if(this.libros.get(i).getAniCode() == aniCode) {
+				libro = this.libros.get(i);
+			}
+		}
+		
+		return libro;
 	}
 }

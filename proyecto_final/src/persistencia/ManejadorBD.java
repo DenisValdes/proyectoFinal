@@ -1,11 +1,13 @@
 package persistencia;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Date;
+
+import javax.xml.soap.Text;
 
 import logica.Orientacion;
 import logica.TipoUsuario;
@@ -167,7 +169,7 @@ public class ManejadorBD {
 
 			switch (tipo) {
 			case "Estudiante":
-				statement.executeUpdate("INSERT INTO estudiantes(id,orientacion,prestamos_activos) VALUES (" + id + ",'"+ orient + "'," + 2 + ");");
+				statement.executeUpdate("INSERT INTO estudiantes(id,orientacion,prestamos_activos) VALUES (" + id + ",'"+ orient + "'," + 0 + ");");
 				break;
 
 			case "Profesor":
@@ -187,6 +189,23 @@ public class ManejadorBD {
 
 	}
 
+	public void incrementarPrestamo(int id, int prestamo){
+		try {
+			Conn connect = new Conn();
+			con = connect.conectarMySQL();
+			PreparedStatement ps = con.prepareStatement("UPDATE estudiantes SET prestamos_activos=? WHERE id=?");
+			ps.setInt(1, prestamo);
+			ps.setInt(2, id);
+
+			ps.executeUpdate();
+			ps.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	
 	public void modificarDatos(int id, int ci, String nombre, String apellido, String mail, String pass) {
 		try {
 			Conn connect = new Conn();
@@ -209,20 +228,22 @@ public class ManejadorBD {
 	}
 
 	//Prestamos
-	public void altaPrestamoDB(int id, Boolean devuelto, Date fecha_solicitud, Date fecha_devolucion, int id_usuario, int codigo_libro) {
+	public void altaPrestamoDB(int id, Boolean devuelto, String fecha_solicitud, String fecha_devolucion, int id_usuario, String codigo_libro) {
 
 		try {
+			
 			Conn connect = new Conn();
 			con = connect.conectarMySQL();
 			Statement statement;
 
 			statement = con.createStatement();
-			statement.executeUpdate("INSERT INTO usuarios(id, devuelto, fecha_solicitud, fecha_devolucion, id_usuario, codigo_libro) VALUES ("+id+", "+devuelto+", "+fecha_solicitud+", "+fecha_devolucion+", "+id_usuario+", "+codigo_libro+")");
+			statement.executeUpdate("INSERT INTO prestamos(id, devuelto, fecha_solicitud, fecha_devolucion, id_usuario, codigo_libro) VALUES ("+id+", "+devuelto+", '"+fecha_solicitud+"', '"+fecha_devolucion+"', "+id_usuario+", '"+codigo_libro+"')");
 
 			statement.close();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			System.out.println(e);
 		}
 
 	}

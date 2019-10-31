@@ -2,7 +2,7 @@ package presentacion;
 
 import logica.Libro;
 import logica.Manejador;
-
+import logica.Prestamo;
 import logica.Usuario;
 import persistencia.ManejadorBD;
 
@@ -12,7 +12,6 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
 import javax.swing.JTextField;
 import javax.swing.JLabel;
 import javax.swing.JMenuBar;
@@ -32,7 +31,6 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.DataOutput;
 import java.util.ArrayList;
 import java.awt.SystemColor;
 import javax.swing.JPasswordField;
@@ -44,6 +42,8 @@ import javax.swing.DefaultListModel;
 import javax.swing.JTable;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
+import com.toedter.calendar.JDateChooser;
+import javax.swing.UIManager;
 
 public class Interface extends JFrame {
 
@@ -55,7 +55,7 @@ public class Interface extends JFrame {
 	public JTextField inputMail;
 	public JTextField inputCI;
 	private JPasswordField pAlta;
-	private JList<String> list;
+	private JList<String> listUsers;
 
 	DefaultListModel<String> listModel;
 	DefaultTableModel listlibros;
@@ -67,6 +67,10 @@ public class Interface extends JFrame {
 	private JTextField updateMail;
 	private JTextField updatePass;
 	private JTable table;
+	private JTextField searchLibro;
+	private JTextField searchUsers;
+	private JTable tablePrestamos;
+	private JTextField textField;
 
 	// Launch the application
 	public static void main(String[] args) {
@@ -111,38 +115,158 @@ public class Interface extends JFrame {
 		JMenu librosContent = new JMenu("Libros");
 		menuBar.add(librosContent);
 
-		JMenuItem mntmNewMenuItem_3 = new JMenuItem("Dar de alta un libro ");
+		JMenuItem mntmNewMenuItem_3 = new JMenuItem("Listado de libros");
+
 		librosContent.add(mntmNewMenuItem_3);
-		
-		JMenuItem mntmListaDeLibros = new JMenuItem("Lista de libros");
-		
+
+		JMenuItem mntmListaDeLibros = new JMenuItem("Crear libro");
+
 		librosContent.add(mntmListaDeLibros);
 
 		JMenu prestamosContent = new JMenu("Prestamos");
 		menuBar.add(prestamosContent);
 
-		JMenuItem mntmNewMenuItem = new JMenuItem("Dar de alta un prestamo");
-		prestamosContent.add(mntmNewMenuItem);
+		JMenuItem altaPrestamo = new JMenuItem("Dar de alta un prestamo");
 
-		JMenuItem mntmNewMenuItem_2 = new JMenuItem("Listar Prestamos");
-		prestamosContent.add(mntmNewMenuItem_2);
+		prestamosContent.add(altaPrestamo);
 
-		JMenuItem mntmNewMenuItem_1 = new JMenuItem("Consultar prestamos");
-		prestamosContent.add(mntmNewMenuItem_1);
+		JMenuItem listadoPrestamos = new JMenuItem("Historial de prestamos");
 
-		JMenuItem mntmNewMenuItem_4 = new JMenuItem("Dar de baja un Prestamo");
-		prestamosContent.add(mntmNewMenuItem_4);
+		prestamosContent.add(listadoPrestamos);
 
 		JButton Logout = new JButton("Desconectar");
 		Logout.setBackground(Color.WHITE);
 
 		menuBar.add(Logout);
 
+		// Panel Content
 		princialPanel = new JPanel();
 		princialPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(princialPanel);
 		princialPanel.setLayout(null);
 
+		// Alta prestamos
+		JPanel altaPrestamos = new JPanel();
+		altaPrestamos.setBounds(0, 0, 900, 600);
+		princialPanel.add(altaPrestamos);
+		altaPrestamos.setLayout(null);
+		altaPrestamos.setVisible(false);
+
+		JScrollPane scrollbar = new JScrollPane();
+		scrollbar.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+		scrollbar.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		scrollbar.setBounds(40, 197, 380, 357);
+		altaPrestamos.add(scrollbar);
+
+		JList<String> userPrestamos = new JList<String>();
+		scrollbar.setViewportView(userPrestamos);
+
+		searchUsers = new JTextField();
+
+		searchUsers.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		searchUsers.setText("Ingrese CI del usuario...");
+		searchUsers.setBounds(627, 37, 192, 33);
+		altaPrestamos.add(searchUsers);
+		searchUsers.setColumns(10);
+
+		JButton button = new JButton("");
+		button.setIcon(new ImageIcon(Interface.class.getResource("/search.png")));
+		button.setBounds(829, 37, 36, 33);
+		altaPrestamos.add(button);
+
+		JPanel prestamoInfo = new JPanel();
+		prestamoInfo.setBorder(UIManager.getBorder("ComboBox.border"));
+		prestamoInfo.setBounds(479, 197, 386, 357);
+		altaPrestamos.add(prestamoInfo);
+		prestamoInfo.setLayout(null);
+		prestamoInfo.setVisible(false);
+
+		JDateChooser fechaPrestamo = new JDateChooser();
+		fechaPrestamo.setBounds(68, 134, 231, 28);
+		prestamoInfo.add(fechaPrestamo);
+
+		JDateChooser fechaDevolucion = new JDateChooser();
+		fechaDevolucion.setBounds(68, 204, 231, 28);
+		prestamoInfo.add(fechaDevolucion);
+
+		JComboBox<String> librosPrestamo = new JComboBox<String>();
+		librosPrestamo.setBounds(68, 273, 231, 28);
+		prestamoInfo.add(librosPrestamo);
+
+		JLabel lblInformacionDelPrestamo = new JLabel("Informacion del prestamo");
+		lblInformacionDelPrestamo.setFont(new Font("Alef", Font.PLAIN, 25));
+		lblInformacionDelPrestamo.setHorizontalAlignment(SwingConstants.CENTER);
+		lblInformacionDelPrestamo.setBounds(47, 42, 303, 22);
+		prestamoInfo.add(lblInformacionDelPrestamo);
+
+		JButton aceptarPrestamo = new JButton("Aceptar");
+
+		aceptarPrestamo.setBounds(137, 324, 102, 22);
+		prestamoInfo.add(aceptarPrestamo);
+
+		JLabel lblSeleccioneLibro = new JLabel("Seleccione libro");
+		lblSeleccioneLibro.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		lblSeleccioneLibro.setBounds(55, 248, 119, 14);
+		prestamoInfo.add(lblSeleccioneLibro);
+
+		JLabel lblSeleccioneFechaDe = new JLabel("Seleccione fecha de devolucion");
+		lblSeleccioneFechaDe.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		lblSeleccioneFechaDe.setBounds(55, 179, 201, 14);
+		prestamoInfo.add(lblSeleccioneFechaDe);
+
+		JLabel lblSeleccioneFechaDe_1 = new JLabel("Seleccione fecha de solicitud");
+		lblSeleccioneFechaDe_1.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		lblSeleccioneFechaDe_1.setBounds(55, 109, 201, 14);
+		prestamoInfo.add(lblSeleccioneFechaDe_1);
+
+		JLabel lblAltaDePrestamos = new JLabel("Alta de prestamos");
+		lblAltaDePrestamos.setFont(new Font("Alef", Font.BOLD, 20));
+		lblAltaDePrestamos.setBounds(351, 39, 192, 27);
+		altaPrestamos.add(lblAltaDePrestamos);
+
+		JLabel label_2 = new JLabel("");
+		label_2.setIcon(new ImageIcon(Interface.class.getResource("/listadoU.png")));
+		label_2.setBounds(0, 0, 900, 600);
+		altaPrestamos.add(label_2);
+		
+
+		// Historial de prestamos
+		JPanel historialPrestamos = new JPanel();
+		historialPrestamos.setBounds(0, 0, 900, 600);
+		princialPanel.add(historialPrestamos);
+		historialPrestamos.setLayout(null);
+
+		JScrollPane scrollPane_2 = new JScrollPane();
+		scrollPane_2.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		scrollPane_2.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+		scrollPane_2.setBounds(45, 182, 813, 381);
+		historialPrestamos.add(scrollPane_2);
+
+		tablePrestamos = new JTable();
+		scrollPane_2.setViewportView(tablePrestamos);
+		historialPrestamos.setVisible(false);
+
+		JLabel lblHistorialDePrestamos = new JLabel("Historial de prestamos");
+		lblHistorialDePrestamos.setFont(new Font("Alef", Font.BOLD, 25));
+		lblHistorialDePrestamos.setBounds(302, 117, 288, 54);
+		historialPrestamos.add(lblHistorialDePrestamos);
+
+		textField = new JTextField();
+		textField.setBounds(628, 40, 196, 28);
+		historialPrestamos.add(textField);
+		textField.setColumns(10);
+
+		JButton button_1 = new JButton("");
+		button_1.setIcon(new ImageIcon(Interface.class.getResource("/search.png")));
+		button_1.setBounds(829, 40, 39, 28);
+		historialPrestamos.add(button_1);
+
+		JLabel label_3 = new JLabel("");
+		label_3.setIcon(new ImageIcon(Interface.class.getResource("/listaLibros.png")));
+		label_3.setBounds(0, 0, 900, 600);
+		historialPrestamos.add(label_3);
+
+		// Lista de libros
 		JPanel libros = new JPanel();
 		libros.setBounds(0, 0, 900, 600);
 		princialPanel.add(libros);
@@ -151,22 +275,44 @@ public class Interface extends JFrame {
 
 		JScrollPane scrollPane_1 = new JScrollPane();
 		scrollPane_1.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-		scrollPane_1.setBounds(27, 146, 844, 379);
+		scrollPane_1.setBounds(38, 209, 825, 365);
 		libros.add(scrollPane_1);
 
-	    JTable table = new JTable();
-	    table.setFillsViewportHeight(true);
+		table = new JTable();
+		table.setFillsViewportHeight(true);
 		scrollPane_1.setViewportView(table);
-		
-		JButton btnNewButton = new JButton("New button");
-		
-		btnNewButton.setBounds(23, 54, 184, 59);
+
+		JButton refrescarLibros = new JButton("Listar todo");
+
+		refrescarLibros.setBounds(38, 179, 184, 30);
+		libros.add(refrescarLibros);
+		table.setBackground(Color.WHITE);
+		table.setRowHeight(30);
+
+		searchLibro = new JTextField();
+		searchLibro.setBounds(635, 39, 176, 30);
+		libros.add(searchLibro);
+		searchLibro.setColumns(10);
+
+		JButton btnNewButton = new JButton("");
+		btnNewButton.setIcon(new ImageIcon(Interface.class.getResource("/search.png")));
+		btnNewButton.setBounds(826, 39, 30, 30);
 		libros.add(btnNewButton);
+
+		JLabel lblLibros = new JLabel("Libros");
+		lblLibros.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		lblLibros.setBounds(38, 133, 58, 35);
+		libros.add(lblLibros);
+
+		JLabel label_1 = new JLabel("");
+		label_1.setIcon(new ImageIcon(Interface.class.getResource("/listaLibros.png")));
+		label_1.setBounds(0, 0, 900, 600);
+		libros.add(label_1);
 
 		// Vista listado de usuarios
 		JPanel listadoUsuario = new JPanel();
 		listadoUsuario.setToolTipText("");
-		listadoUsuario.setBackground(SystemColor.activeCaption);
+		listadoUsuario.setBackground(Color.WHITE);
 		listadoUsuario.setBounds(0, 0, 900, 600);
 		princialPanel.add(listadoUsuario);
 		listadoUsuario.setVisible(false);
@@ -175,7 +321,7 @@ public class Interface extends JFrame {
 		JLabel lblNewLabel_2 = new JLabel("Listado de usuarios");
 		lblNewLabel_2.setFont(new Font("Tahoma", Font.BOLD, 24));
 		lblNewLabel_2.setHorizontalAlignment(SwingConstants.LEFT);
-		lblNewLabel_2.setBounds(326, 11, 242, 34);
+		lblNewLabel_2.setBounds(332, 32, 242, 34);
 		listadoUsuario.add(lblNewLabel_2);
 
 		inputSearch = new JTextField();
@@ -183,36 +329,37 @@ public class Interface extends JFrame {
 
 		inputSearch.setText("Ingrese CI de usuario...");
 		inputSearch.setToolTipText("");
-		inputSearch.setBounds(26, 94, 183, 31);
+		inputSearch.setBounds(631, 41, 183, 25);
 		listadoUsuario.add(inputSearch);
 		inputSearch.setColumns(10);
 
 		JButton searchUser = new JButton("");
 		searchUser.setIcon(new ImageIcon(Interface.class.getResource("/search.png")));
 
-		searchUser.setBounds(219, 94, 41, 31);
+		searchUser.setBounds(824, 35, 34, 31);
 		listadoUsuario.add(searchUser);
 
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(64, 136, 302, 342);
+		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+		scrollPane.setBounds(42, 194, 378, 358);
 		listadoUsuario.add(scrollPane);
 
-		list = new JList<String>();
-		scrollPane.setViewportView(list);
-		list.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		listUsers = new JList<String>();
+		scrollPane.setViewportView(listUsers);
+		listUsers.setFont(new Font("Tahoma", Font.PLAIN, 15));
 
-		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		listUsers.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
 		JButton refrescarLista = new JButton("Refrescar lista");
 		refrescarLista.setFont(new Font("Tahoma", Font.PLAIN, 15));
 
-		refrescarLista.setBounds(64, 489, 167, 26);
+		refrescarLista.setBounds(42, 563, 167, 26);
 		listadoUsuario.add(refrescarLista);
 
-		// Panel donde se mostrara la consulta de usuario
 		JPanel infoUser = new JPanel();
 		infoUser.setBackground(SystemColor.info);
-		infoUser.setBounds(453, 136, 406, 342);
+		infoUser.setBounds(483, 194, 378, 358);
 		listadoUsuario.add(infoUser);
 		infoUser.setLayout(null);
 
@@ -267,10 +414,10 @@ public class Interface extends JFrame {
 		JLabel mailInfo = new JLabel("mail");
 		mailInfo.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		mailInfo.setBackground(Color.WHITE);
-		mailInfo.setBounds(83, 153, 167, 18);
+		mailInfo.setBounds(83, 153, 244, 18);
 		infoUser.add(mailInfo);
 
-		JLabel prestamosInfo = new JLabel("p");
+		JLabel prestamosInfo = new JLabel("");
 		prestamosInfo.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		prestamosInfo.setBackground(Color.WHITE);
 		prestamosInfo.setBounds(173, 190, 42, 39);
@@ -311,7 +458,7 @@ public class Interface extends JFrame {
 
 		updateMail = new JTextField();
 		updateMail.setColumns(10);
-		updateMail.setBounds(83, 153, 167, 20);
+		updateMail.setBounds(83, 153, 199, 20);
 		infoUser.add(updateMail);
 		updateMail.setVisible(false);
 
@@ -343,9 +490,199 @@ public class Interface extends JFrame {
 		aceptarUpdate.setBounds(199, 246, 83, 23);
 		infoUser.add(aceptarUpdate);
 
-		// Listado de usuarios
+		JLabel lblMails = new JLabel("Mails");
+		lblMails.setHorizontalAlignment(SwingConstants.LEFT);
+		lblMails.setFont(new Font("Tahoma", Font.BOLD, 24));
+		lblMails.setBounds(42, 149, 242, 34);
+		listadoUsuario.add(lblMails);
+
+		JLabel label = new JLabel("");
+		label.setIcon(new ImageIcon(Interface.class.getResource("/listadoU.png")));
+		label.setBounds(0, 0, 900, 600);
+		listadoUsuario.add(label);
+
+		// Panel alta usuario
+		JPanel altaUsuario = new JPanel();
+		altaUsuario.setBackground(SystemColor.text);
+		altaUsuario.setBounds(0, 0, 900, 600);
+		princialPanel.add(altaUsuario);
+		altaUsuario.setLayout(null);
+		altaUsuario.setVisible(false);
+
+		JLabel lblNewLabel_1 = new JLabel("Ingrese aqu\u00ED los datos solicitados");
+		lblNewLabel_1.setBounds(526, 76, 328, 32);
+		lblNewLabel_1.setFont(new Font("Alef", Font.PLAIN, 22));
+		altaUsuario.add(lblNewLabel_1);
+
+		inputNombre = new JTextField();
+		inputNombre.setBounds(526, 144, 157, 23);
+		inputNombre.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		inputNombre.setText("Nombre");
+		altaUsuario.add(inputNombre);
+		inputNombre.setColumns(10);
+
+		inputApellido = new JTextField();
+		inputApellido.setBounds(697, 144, 157, 23);
+		inputApellido.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		inputApellido.setText("Apellido");
+		inputApellido.setColumns(10);
+		altaUsuario.add(inputApellido);
+
+		inputMail = new JTextField();
+		inputMail.setBounds(526, 234, 328, 23);
+
+		inputMail.setText("Ej. usuario@anima.edu.uy");
+		inputMail.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		inputMail.setColumns(10);
+		altaUsuario.add(inputMail);
+
+		inputCI = new JTextField();
+		inputCI.setBounds(526, 178, 328, 23);
+		inputCI.setText("CI del usuario");
+		inputCI.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		inputCI.setColumns(10);
+		altaUsuario.add(inputCI);
+
+		JLabel lblEmail = new JLabel("E-mail");
+		lblEmail.setBounds(526, 212, 46, 23);
+		lblEmail.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		altaUsuario.add(lblEmail);
+
+		JLabel lblPassword = new JLabel("Password");
+		lblPassword.setBounds(526, 268, 74, 32);
+		lblPassword.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		altaUsuario.add(lblPassword);
+
+		JCheckBox mostrarPassword = new JCheckBox("Mostrar password");
+
+		mostrarPassword.setBounds(526, 331, 137, 23);
+		altaUsuario.add(mostrarPassword);
+
+		JComboBox<String> tipoUsuario = new JComboBox<String>();
+		tipoUsuario.setBounds(526, 386, 118, 23);
+		altaUsuario.add(tipoUsuario);
+
+		JLabel lblOrientacion = new JLabel("Orientacion a la que pertenece el usuario");
+		lblOrientacion.setBounds(526, 429, 328, 23);
+		lblOrientacion.setFont(new Font("Tahoma", Font.PLAIN, 17));
+		altaUsuario.add(lblOrientacion);
+
+		JLabel lblTipoDeUsuario = new JLabel("Tipo de usuario");
+		lblTipoDeUsuario.setFont(new Font("Tahoma", Font.PLAIN, 17));
+		lblTipoDeUsuario.setBounds(526, 361, 328, 23);
+		altaUsuario.add(lblTipoDeUsuario);
+
+		JComboBox<String> orientUsuario = new JComboBox<String>();
+		orientUsuario.setBounds(526, 453, 118, 23);
+		altaUsuario.add(orientUsuario);
+
+		JButton btnAceptar = new JButton("Aceptar");
+		btnAceptar.setFont(new Font("Alef", Font.PLAIN, 15));
+		btnAceptar.setBounds(709, 503, 89, 23);
+		altaUsuario.add(btnAceptar);
+
+		JButton btnCancelar = new JButton("Cancelar");
+
+		btnCancelar.setFont(new Font("Alef", Font.PLAIN, 14));
+		btnCancelar.setBounds(583, 503, 89, 23);
+		altaUsuario.add(btnCancelar);
+
+		pAlta = new JPasswordField();
+		pAlta.setBounds(526, 301, 328, 23);
+		altaUsuario.add(pAlta);
+
+		JLabel background = new JLabel("");
+		background.setBounds(0, 0, 900, 600);
+		background.setIcon(new ImageIcon(Interface.class.getResource("/fondo-biblAnima.png")));
+		altaUsuario.add(background);
+
+		// Acciones
+
+		// Menu
+		btnAltaUsuario.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				altaUsuario.setVisible(true);
+				listadoUsuario.setVisible(false);
+				libros.setVisible(false);
+				historialPrestamos.setVisible(false);
+				altaPrestamos.setVisible(false);
+			}
+		});
+
+		btnListarUsuariosExistentes.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				listadoUsuario.setVisible(true);
+				altaUsuario.setVisible(false);
+				libros.setVisible(false);
+				historialPrestamos.setVisible(false);
+				altaPrestamos.setVisible(false);
+
+				man.altaUsuario();
+
+				listModel = new DefaultListModel<>();
+				listUsers.setModel(listModel);
+
+				ArrayList<Usuario> usuarios = man.listarUsuariosExistentes();
+				String mail;
+
+				for (int i = 0; usuarios.size() > i; i++) {
+					mail = usuarios.get(i).getMail();
+					listModel.add(i, mail);
+				}
+
+				listUsers.setModel(listModel);
+			}
+		});
+
+		mntmListaDeLibros.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+
+				listadoUsuario.setVisible(false);
+				altaUsuario.setVisible(false);
+				libros.setVisible(true);
+				altaPrestamos.setVisible(false);
+				historialPrestamos.setVisible(false);
+
+			}
+		});
+
+		Logout.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				Interface.this.dispose();
+				Login frame = new Login();
+				frame.setVisible(true);
+			}
+		});
+
+		mntmNewMenuItem_3.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				altaPrestamo.setVisible(false);
+				altaUsuario.setVisible(false);
+				libros.setVisible(true);
+				historialPrestamos.setVisible(false);
+				listadoUsuario.setVisible(false);
+			}
+		});
+
+		// Listado usuarios
 		// El programa inicia con esta vista
 		listadoUsuario.setVisible(true);
+
+		man.altaUsuario();
+
+		listModel = new DefaultListModel<>();
+		listUsers.setModel(listModel);
+
+		ArrayList<Usuario> usuarios = man.listarUsuariosExistentes();
+		String mail;
+
+		for (int i = 0; usuarios.size() > i; i++) {
+			mail = usuarios.get(i).getMail();
+			listModel.add(i, mail);
+		}
+
+		listUsers.setModel(listModel);
 
 		inputSearch.addFocusListener(new FocusAdapter() {
 			@Override
@@ -372,14 +709,14 @@ public class Interface extends JFrame {
 					Usuario usuario = man.buscarUsuario(Integer.valueOf(inputSearch.getText()));
 
 					listModel = new DefaultListModel<>();
-					list.setModel(listModel);
+					listUsers.setModel(listModel);
 
 					String mail;
 
 					mail = usuario.getMail();
 					listModel.add(0, mail);
 
-					list.setModel(listModel);
+					listUsers.setModel(listModel);
 
 					JOptionPane.showMessageDialog(null, "Usuario encontrado!", "Mensaje del sistema",
 							JOptionPane.PLAIN_MESSAGE);
@@ -400,7 +737,7 @@ public class Interface extends JFrame {
 				man.altaUsuario();
 
 				listModel = new DefaultListModel<>();
-				list.setModel(listModel);
+				listUsers.setModel(listModel);
 
 				ArrayList<Usuario> usuarios = man.listarUsuariosExistentes();
 				String mail;
@@ -410,7 +747,7 @@ public class Interface extends JFrame {
 					listModel.add(i, mail);
 				}
 
-				list.setModel(listModel);
+				listUsers.setModel(listModel);
 
 			}
 		});
@@ -487,7 +824,7 @@ public class Interface extends JFrame {
 
 				try {
 
-					String mail = list.getSelectedValue();
+					String mail = listUsers.getSelectedValue();
 
 					Usuario usuario = man.consultaUsuario(mail);
 
@@ -501,7 +838,7 @@ public class Interface extends JFrame {
 					infoUser.setVisible(false);
 
 					listModel = new DefaultListModel<>();
-					list.setModel(listModel);
+					listUsers.setModel(listModel);
 
 					ArrayList<Usuario> usuarios = man.listarUsuariosExistentes();
 					String mailRefresh;
@@ -511,7 +848,7 @@ public class Interface extends JFrame {
 						listModel.add(i, mailRefresh);
 					}
 
-					list.setModel(listModel);
+					listUsers.setModel(listModel);
 
 					nombreInfo.setVisible(true);
 					updateNombre.setVisible(false);
@@ -545,100 +882,27 @@ public class Interface extends JFrame {
 			}
 		});
 
-		// Panel alta usuario
-		JPanel altaUsuario = new JPanel();
-		altaUsuario.setBackground(SystemColor.text);
-		altaUsuario.setBounds(0, 0, 900, 600);
-		princialPanel.add(altaUsuario);
-		altaUsuario.setLayout(null);
-		altaUsuario.setVisible(false);
+		// Muestra info de usuario seleccionado
+		listUsers.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent evt) {
+				evt.getSource();
+				if (evt.getClickCount() == 1) {
 
-		JLabel lblNewLabel_1 = new JLabel("Ingrese aqu\u00ED los datos solicitados");
-		lblNewLabel_1.setBounds(526, 45, 328, 32);
-		lblNewLabel_1.setFont(new Font("Alef", Font.PLAIN, 22));
-		altaUsuario.add(lblNewLabel_1);
+					String mail = listUsers.getSelectedValue();
+					Usuario usuario = man.consultaUsuario(mail);
 
-		inputNombre = new JTextField();
-		inputNombre.setBounds(526, 109, 157, 23);
-		inputNombre.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		inputNombre.setText("Nombre");
-		altaUsuario.add(inputNombre);
-		inputNombre.setColumns(10);
+					int prestamos = man.devolverPrestamos(usuario.getId());
 
-		inputApellido = new JTextField();
-		inputApellido.setBounds(697, 109, 157, 23);
-		inputApellido.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		inputApellido.setText("Apellido");
-		inputApellido.setColumns(10);
-		altaUsuario.add(inputApellido);
+					infoUser.setVisible(true);
+					nombreInfo.setText(usuario.getNombre());
+					apellidoInfo.setText(usuario.getApellido());
+					ciInfo.setText(String.valueOf(usuario.getCI()));
+					mailInfo.setText(usuario.getMail());
+					prestamosInfo.setText(String.valueOf(prestamos));
 
-		inputMail = new JTextField();
-		inputMail.setBounds(526, 217, 328, 23);
-
-		inputMail.setText("Ej. usuario@anima.edu.uy");
-		inputMail.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		inputMail.setColumns(10);
-		altaUsuario.add(inputMail);
-
-		inputCI = new JTextField();
-		inputCI.setBounds(526, 158, 328, 23);
-		inputCI.setText("CI del usuario");
-		inputCI.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		inputCI.setColumns(10);
-		altaUsuario.add(inputCI);
-
-		JLabel lblEmail = new JLabel("E-mail");
-		lblEmail.setBounds(526, 194, 46, 23);
-		lblEmail.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		altaUsuario.add(lblEmail);
-
-		JLabel lblPassword = new JLabel("Password");
-		lblPassword.setBounds(526, 251, 74, 32);
-		lblPassword.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		altaUsuario.add(lblPassword);
-
-		JCheckBox mostrarPassword = new JCheckBox("Mostrar password");
-
-		mostrarPassword.setBounds(526, 305, 137, 23);
-		altaUsuario.add(mostrarPassword);
-
-		JComboBox<String> tipoUsuario = new JComboBox<String>();
-		tipoUsuario.setBounds(526, 372, 118, 23);
-		altaUsuario.add(tipoUsuario);
-
-		JLabel lblOrientacion = new JLabel("Orientacion a la que pertenece el usuario");
-		lblOrientacion.setBounds(526, 389, 328, 44);
-		lblOrientacion.setFont(new Font("Tahoma", Font.PLAIN, 17));
-		altaUsuario.add(lblOrientacion);
-
-		JLabel lblTipoDeUsuario = new JLabel("Tipo de usuario");
-		lblTipoDeUsuario.setFont(new Font("Tahoma", Font.PLAIN, 17));
-		lblTipoDeUsuario.setBounds(526, 334, 328, 44);
-		altaUsuario.add(lblTipoDeUsuario);
-
-		JComboBox<String> orientUsuario = new JComboBox<String>();
-		orientUsuario.setBounds(526, 432, 118, 23);
-		altaUsuario.add(orientUsuario);
-
-		JButton btnAceptar = new JButton("Aceptar");
-		btnAceptar.setFont(new Font("Alef", Font.PLAIN, 15));
-		btnAceptar.setBounds(724, 477, 89, 23);
-		altaUsuario.add(btnAceptar);
-
-		JButton btnCancelar = new JButton("Cancelar");
-
-		btnCancelar.setFont(new Font("Alef", Font.PLAIN, 14));
-		btnCancelar.setBounds(579, 477, 89, 23);
-		altaUsuario.add(btnCancelar);
-
-		pAlta = new JPasswordField();
-		pAlta.setBounds(526, 278, 328, 23);
-		altaUsuario.add(pAlta);
-
-		JLabel background = new JLabel("");
-		background.setBounds(0, 0, 900, 600);
-		background.setIcon(new ImageIcon(Interface.class.getResource("/fondo-biblAnima.png")));
-		altaUsuario.add(background);
+				}
+			}
+		});
 
 		// Alta usuario
 		btnAceptar.addActionListener(new ActionListener() {
@@ -758,116 +1022,198 @@ public class Interface extends JFrame {
 		orientUsuario.addItem("ADM");
 		orientUsuario.addItem("TICYADM");
 
-		// Acciones
+		// Se cargan todos los datos al iniciar el programa: usuarios, libros y
+		// prestamos.
 
-		// Menu
-		btnAltaUsuario.addActionListener(new ActionListener() {
+		// Usuarios
+		man.altaUsuario();
+
+		listModel = new DefaultListModel<>();
+
+		ArrayList<Usuario> usuarios1 = man.listarUsuariosExistentes();
+		String mail1;
+
+		for (int i = 0; usuarios1.size() > i; i++) {
+			mail1 = usuarios1.get(i).getMail();
+			listModel.add(i, mail1);
+		}
+
+		// Libros
+
+		man.traerLibrosBd();
+
+		ArrayList<Libro> librosList = man.listarLibros();
+
+		DefaultTableModel listlibros = new DefaultTableModel();
+
+		Object[] columns = { "Titulo", "Autor", "Edicion", "Ejemplares disponibles", "Codigo" };
+		listlibros.setColumnIdentifiers(columns);
+
+		for (int i = 0; i < librosList.size(); i++) {
+			Object[] row = new Object[5];
+
+			row[0] = librosList.get(i).getTitulo();
+			row[1] = librosList.get(i).getAutor();
+			row[2] = librosList.get(i).getNroEdicion();
+			row[3] = librosList.get(i).getHayEjemplarDisponible();
+			row[4] = librosList.get(i).getAniCode();
+
+			listlibros.addRow(row);
+		}
+
+		// Se cargan los libros al JComboBox de prestamos
+		for (int i = 0; i < librosList.size(); i++) {
+			librosPrestamo.addItem(librosList.get(i).getAniCode());
+		}
+
+		// Listar prestamos
+		listadoPrestamos.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				altaUsuario.setVisible(true);
+				listadoUsuario.setVisible(false);
+				altaUsuario.setVisible(false);
+				altaPrestamos.setVisible(false);
+				libros.setVisible(false);
+				historialPrestamos.setVisible(true);
+
+				man.altaPrestamo();
+
+				ArrayList<Prestamo> prestamos = man.listarPrestamos();
+
+				DefaultTableModel prestamoModel = new DefaultTableModel();
+
+				Object[] columnsP = { "Fecha de solicitu", "Fecha de devolucion", "Estado", "Usuario",
+						"Codigo del libro" };
+				prestamoModel.setColumnIdentifiers(columnsP);
+
+				for (int i = 0; i < prestamos.size(); i++) {
+					Object[] row = new Object[5];
+
+					row[0] = prestamos.get(i).getFechaSolicitado();
+					row[1] = prestamos.get(i).getFechaDevolucion();
+
+					if (prestamos.get(i).getDevuelto() == true) {
+						row[2] = "Devuelto";
+					}
+					if (prestamos.get(i).getDevuelto() == false) {
+						row[2] = "Sin devolver";
+					}
+
+					Usuario user = man.consultaUsuarioID(prestamos.get(i).getId_user());
+					row[3] = user.getMail();
+					row[4] = prestamos.get(i).getAniCode();
+
+					prestamoModel.addRow(row);
+				}
+			}
+		});
+
+		man.altaPrestamo();
+
+		ArrayList<Prestamo> prestamos = man.listarPrestamos();
+
+		DefaultTableModel prestamoModel = new DefaultTableModel();
+
+		Object[] columnsP = { "Fecha de solicitu", "Fecha de devolucion", "Estado", "Usuario", "Codigo del libro" };
+		prestamoModel.setColumnIdentifiers(columnsP);
+
+		for (int i = 0; i < prestamos.size(); i++) {
+			Object[] row = new Object[5];
+
+			row[0] = prestamos.get(i).getFechaSolicitado();
+			row[1] = prestamos.get(i).getFechaDevolucion();
+
+			if (prestamos.get(i).getDevuelto() == true) {
+				row[2] = "Devuelto";
+			}
+			if (prestamos.get(i).getDevuelto() == false) {
+				row[2] = "Sin devolver";
+			}
+
+			Usuario user = man.consultaUsuarioID(prestamos.get(i).getId_user());
+			row[3] = user.getMail();
+			row[4] = prestamos.get(i).getAniCode();
+
+			prestamoModel.addRow(row);
+		}
+		altaPrestamo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				altaPrestamos.setVisible(true);
 				listadoUsuario.setVisible(false);
 				libros.setVisible(false);
-
-			}
-		});
-
-		btnListarUsuariosExistentes.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				listadoUsuario.setVisible(true);
+				historialPrestamos.setVisible(false);
 				altaUsuario.setVisible(false);
-				libros.setVisible(false);
 
-				man.altaUsuario();
-
-				listModel = new DefaultListModel<>();
-				list.setModel(listModel);
-
-				ArrayList<Usuario> usuarios = man.listarUsuariosExistentes();
-				String mail;
-
-				for (int i = 0; usuarios.size() > i; i++) {
-					mail = usuarios.get(i).getMail();
-					listModel.add(i, mail);
-				}
-
-				list.setModel(listModel);
 			}
 		});
-
-		mntmListaDeLibros.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-			
-				listadoUsuario.setVisible(false);
-				altaUsuario.setVisible(false);
-				libros.setVisible(true);
-				
-			}
-		});
+		tablePrestamos.setModel(prestamoModel);
+		table.setModel(listlibros);
 		
-		Logout.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				Interface.this.dispose();
-				Login frame = new Login();
-				frame.setVisible(true);
-			}
-		});
-
-
 		
+		// buscar user en altaprestamos
+				searchUsers.addFocusListener(new FocusAdapter() {
+					@Override
+					public void focusGained(FocusEvent arg0) {
+						if (searchUsers.getText().equals("Ingrese CI del usuario...")) {
+							searchUsers.setText("");
+						} else if (searchUsers.getText().equals("")) {
+							searchUsers.setText("Ingrese CI del usuario...");
+						}
+					}
+				});
 
-		// Muestra info de usuario seleccionado
-		list.addMouseListener(new MouseAdapter() {
-			public void mouseClicked(MouseEvent evt) {
-				evt.getSource();
-				if (evt.getClickCount() == 1) {
+				// Aceptar prestamo
 
-					String mail = list.getSelectedValue();
-					Usuario usuario = man.consultaUsuario(mail);
+				aceptarPrestamo.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent arg0) {
 
-					infoUser.setVisible(true);
-					nombreInfo.setText(usuario.getNombre());
-					apellidoInfo.setText(usuario.getApellido());
-					ciInfo.setText(String.valueOf(usuario.getCI()));
-					mailInfo.setText(usuario.getMail());
+						Usuario usuario = man.consultaUsuario(userPrestamos.getSelectedValue());
 
-				}
-			}
-		});
+						System.out.println(man.devolverPrestamos(usuario.getId()));
 
-		// Se cargan todos los datos al iniciar el programa: usuarios, libros y prestamos.
-			man.altaUsuario();
-	
-			listModel = new DefaultListModel<>();
-	
-			ArrayList<Usuario> usuarios = man.listarUsuariosExistentes();
-			String mail;	
-			
-			for (int i = 0; usuarios.size() > i; i++) {
-				mail = usuarios.get(i).getMail();
-				listModel.add(i, mail);
-			}
-			
-			man.traerLibrosBd();
-			
-			ArrayList<Libro> librosList = man.listarLibros();	
-			
-			listlibros = new DefaultTableModel();
-			
-			Object[] columns = {"Titulo", "Autor", "Edicion", "Ejemplares disponibles", "Codigo"};
-			listlibros.setColumnIdentifiers(columns);
-			table.setModel(listlibros);
-			table.setBackground(Color.WHITE);
-			table.setRowHeight(30);
-			
-			for(int i = 0; i < librosList.size(); i++) {
-				Object [] row = new Object[5];
-				
-				row[0] = librosList.get(i).getTitulo();
-				row[1] = librosList.get(i).getAutor();
-				row[2] = librosList.get(i).getNroEdicion();
-				row[3] = librosList.get(i).getHayEjemplarDisponible();
-				row[4] = librosList.get(i).getAniCode();
-				
-				listlibros.addRow(row);
-			} 
+						if (man.devolverPrestamos(usuario.getId()) > 3) {
+
+							System.out.println(man.devolverPrestamos(usuario.getId()));
+							JOptionPane.showMessageDialog(null, "Limite de prestamos en paralelo alcanzado",
+									"Mensaje del sistema", JOptionPane.ERROR_MESSAGE);
+
+						} else {
+
+							try {
+								int id = manBD.generarIdPrestamo();
+								String fecha_solicitud = fechaPrestamo.getDate().toString();
+								String fecha_devolucion = fechaDevolucion.getDate().toString();
+
+								int id_usuario = usuario.getId();
+								Libro libro = man.consultaLibro(librosPrestamo.getSelectedItem().toString());
+								String codigo_libro = libro.getAniCode();
+
+								manBD.altaPrestamoDB(id, false, fecha_solicitud, fecha_devolucion, id_usuario, codigo_libro);
+								JOptionPane.showMessageDialog(null, "Prestamo dado de alta", "Mensaje del sistema",
+										JOptionPane.PLAIN_MESSAGE);
+								prestamoInfo.setVisible(false);
+
+								int incremento_prestamo = man.devolverPrestamos(id_usuario) + 1;
+								manBD.incrementarPrestamo(id_usuario, incremento_prestamo);
+							} catch (Exception r) {
+								System.out.println(r);
+							}
+						}
+
+					}
+				});
+
+				userPrestamos.setModel(listModel);
+
+				userPrestamos.addMouseListener(new MouseAdapter() {
+					public void mouseClicked(MouseEvent evt) {
+						evt.getSource();
+						if (evt.getClickCount() == 1) {
+
+							prestamoInfo.setVisible(true);
+
+						}
+					}
+				});
+		
 	}
 }
